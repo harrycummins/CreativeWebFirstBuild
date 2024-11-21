@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    
+    <div class = "room-key" id="roomKey"><h2>no room created </h2></div>
+    <button> click to make room</button>
+    
+    ,<div>
+        <input type="text" id="username" placeholder="Enter your name">
+        <input type="text" id="joinKey" placeholder="Enter your room key">
+        <button onclick="joinroom()">Join Room</button>
+    </div>
+
+    <script>
+        
+
+        async function createRoom() {
+        try {
+            const response = await fetch ("${baseUrl}/create-room", {method:'POST'})
+            const data =await response.json()
+            document.getElementById('roomKey').textContent=' Room Key: ${data.roomKey}'
+        }   catch (error){
+            console.error('error creating room')
+        }
+        }
+
+        async function joinRoom(){
+            const username = document.getElementById('username').value
+            const roomKey = document.getElementById('joinKey').value
+
+            if (!username || !roomkey){
+                alert("please enter username and roomkey")
+                return
+            }
+        
+
+            try {
+                const response= await fetch('${baseUrl}/create-room', {
+                method: "POST",
+                headers: {"Content-Type": "application/json"} ,
+                body: JSON.stringify({username, roomKey})   
+            })
+
+            if(response.ok) {
+                const data = await response.json()
+                document.getElementById('roomDetails').textContent = 'Users in room: ${data.users.join(', ')}`'
+
+            }else{
+                const errorData = await response.json()
+                alert(errorData.message)
+            }
+
+        }catch(error){
+                console.error("error joining the ruom", error)
+            }
+            {
+
+            }
+        
+        }
+
+    </script>
+
+   
+</body>
+</html>
