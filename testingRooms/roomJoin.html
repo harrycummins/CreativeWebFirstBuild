@@ -3,18 +3,43 @@
 <head>
     <meta charset="UTF-8" />
     <title>title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
 </head>
-<body>
-    
-    <div class = "room-key" id="roomKey"><h2>no room created </h2></div>
-    <button> click to make room</button>
-    
-    ,<div>
-        <input type="text" id="username" placeholder="Enter your name">
-        <input type="text" id="joinKey" placeholder="Enter your room key">
-        <button onclick="joinroom()">Join Room</button>
-    </div>
 
+<body>
+    <style>
+        html, body {
+          height: 100%;
+        }
+        .container {
+          height: 100%;
+        }
+      </style>
+    </head>
+    <body class="d-flex align-items-center">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="row w-100 justify-content-center">
+          <!-- Use col-md-5 for 5 columns on medium screens and up -->
+          <div class="col-md-5">
+            <div class="room-key" id="roomKey"><h2>No room created</h2></div>
+            
+            <!-- Button with Bootstrap class -->
+            <button class="btn btn-primary">Click to make room</button>
+    
+            <div>
+              <!-- Input fields with Bootstrap form-control class -->
+              <input type="text" id="username" class="form-control" placeholder="Enter your name">
+              <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key">
+              
+              <div class="col">
+                <!-- Button with Bootstrap button classes -->
+                <button onclick="joinroom()" class="btn btn-primary">Join Room</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     <script>
         
 
@@ -66,5 +91,8 @@
     </script>
 
    
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
 </body>
 </html>
