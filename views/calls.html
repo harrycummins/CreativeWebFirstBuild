@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily.co Video Room</title>
+</head>
+<body>
+    <h1>Join Video Room</h1>
+    <div id="video-container"></div>
+    <li class="nav-item">
+        <a class="nav-link" href="/create-room">Testing Rooms</a>
+    </li>
+    <button id="start-screen-share">Start Screen Share</button>
+    <button id="stop-screen-share">Stop Screen Share</button>
+
+    <script>
+        // Fetch the room URL from the backend
+        fetch('/create-room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const roomUrl = data.roomUrl;
+            console.log('Room URL:', roomUrl);
+            startCall(roomUrl);  // Join the room
+        })
+        .catch(error => console.error('Error fetching room URL:', error));
+
+        let callObject;
+
+        async function startCall(roomUrl) {
+            // Initialize Daily iframe with the room URL
+            callObject = window.DailyIframe.createFrame({
+                url: roomUrl,
+                showLeaveButton: true,
+                width: '100%',
+                height: '500px',
+            });
+
+            // Join the room
+            await callObject.join();
+        }
+
+        // Start and stop screen share
+        document.getElementById('start-screen-share').addEventListener('click', async () => {
+            await callObject.startScreenShare();
+        });
+
+        document.getElementById('stop-screen-share').addEventListener('click', async () => {
+            await callObject.stopScreenShare();
+        });
+    </script>
+
+    <script src="https://unpkg.com/@daily-co/daily-js@latest"></script>
+</body>
+</html>

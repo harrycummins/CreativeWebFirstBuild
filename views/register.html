@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    <h1>reg</h1>
+    <a href="/login">login</a>
+    <a href="/register">register</a>
+    <a href="/logOut">logout</a>
+    <a href="/app">app</a>
+
+    <h1>Register</h1>
+    <form action="/register" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>  <!-- Name attribute must match backend -->
+        <br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br><br>
+        <input type="submit" value="Register">
+    </form>
+</body>
+</html>
