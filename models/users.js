@@ -1,3 +1,5 @@
+//code was done following in class tutorial
+
 const userData = [ //array of some basic user accounts
     {
         username: 'user1',

@@ -14,7 +14,7 @@ app.listen(PORT, ()=>{
 
 const DAILY_API_KEY = 'c05ef2783ddb563f9130765177d391c31a89e811c577899a87107af7449709f3'; //api key provided from daily
 
-app.post('/create-room', async (req, res) => {
+app.post('/create-room', async (req, res) => { //code was taken from a start up guide within the daily api website
     try {
         const roomName = req.body.name || 'defaultRoomName'; //name of the room given by daily - not loading correct
         const response = await axios.post(
@@ -42,6 +42,7 @@ app.post('/create-room', async (req, res) => {
 
 
 //login system
+//was following the same steps used within class tutorials
 
 app.use(bodyParser.json());
 app.use(cors());
