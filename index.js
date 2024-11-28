@@ -40,7 +40,7 @@ app.post('/create-room', async (req, res) => {
 
 
 
-
+//login system
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -50,7 +50,7 @@ app.use(express.static('public'))
 app.use(express.urlencoded({extended:false}))
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views', 'app.html')); // Adjust the filename if needed
+    res.sendFile(path.join(__dirname, '/views', 'login.html')); // Adjust the filename if needed
 });
 
 app.get('/app', (request,response)=>{
