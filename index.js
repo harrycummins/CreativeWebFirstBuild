@@ -26,7 +26,7 @@ app.post('/create-room', async (req, res) => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${DAILY_API_KEY}`,
+                    Authorization: `Bearer ${c05ef2783ddb563f9130765177d391c31a89e811c577899a87107af7449709f3}`,
                     'Content-Type': 'application/json',
                 },
             }

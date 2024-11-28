@@ -6,17 +6,27 @@ const PORT=3000
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-console.log("listening on port");
+const path = require('path')
+
+// console.log("listening on port");
+app.listen(PORT, ()=>{
+    console.log('listening on port' + PORT)
+})
 
 const rooms = {}; // MongoDB will be added when needed
 
 
-app.use(express.static('roomJoin.html')) //listening to the folder
+// app.use(express.static('roomJoin.html')) //listening to the folder
 
-app.post('createRoom', (req, res) => {
+app.get('/', (req, res)=>{
+    res.sendFile(path.join(__dirname, '/roomJoin.html'));
+})
+
+app.post('/create-room', (req, res) => {
     const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase();
+    console.log('room code',roomKey)
     rooms[roomKey] = { users: [] };
-    res.json({ roomKey });
+    res.json({ roomkey:roomKey });
 });
 
 app.post('/join-room', (req, res) => {
@@ -37,4 +47,5 @@ app.get('roomKey', (req, res) => {
     rooms[roomKey].users.push(username);
     res.json({ message: 'Room joined', users: rooms[roomKey].users });
 });
+
 

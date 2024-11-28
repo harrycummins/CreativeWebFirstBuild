@@ -22,6 +22,7 @@
                     </div>
                 </div>
                 <div id="roomDetails"></div>
+                <p1>'roomKey'</p1>
             </div>
         </div>
     </div>
@@ -31,9 +32,10 @@
 
         async function createRoom() {
             try {
-                const response = await fetch(`${baseUrl}/create-room`, { method: 'POST' });
+                const response = await fetch(`/create-room`, { method: 'POST' });
                 const data = await response.json();
-                document.getElementById('roomKey').textContent = `Room Key: ${data.roomKey}`;
+                console.log('received key', data.roomKey)
+                document.getElementById('roomKey').textContent = `Room Key: ${data.roomkey}`;
             } catch (error) {
                 console.error('Error creating room:', error);
             }
@@ -42,6 +44,7 @@
         async function joinRoom() {
             const username = document.getElementById('username').value;
             const roomKey = document.getElementById('joinKey').value;
+            
 
             if (!username || !roomKey) {
                 alert("Please enter username and room key");
@@ -49,7 +52,7 @@
             }
 
             try {
-                const response = await fetch(`${baseUrl}/join-room`, {
+                const response = await fetch(`/join-room`, {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, roomKey })
