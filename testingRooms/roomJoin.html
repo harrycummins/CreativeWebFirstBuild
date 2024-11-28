@@ -11,18 +11,17 @@
         <div class="row w-100 justify-content-center">
             <div class="col-md-5">
                 <div class="room-key" id="roomKey"><h2>No room created</h2></div>
-                <button class="btn btn-primary" id="createRoom" onclick="createRoom()">Click to make room</button>
+                <button class="btn btn-primary" id="createRoom" onclick="createRoom()">Click to make room</button> <!-- When clicked starts the backend code -->
     
                 <div>
-                    <input type="text" id="username" class="form-control" placeholder="Enter your name">
-                    <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key">
+                    <input type="text" id="username" class="form-control" placeholder="Enter your name"> <!-- Username is stored -->
+                    <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key"> <!-- Room key entered to be checked -->
                     
                     <div class="col">
                         <button onclick="joinRoom()" class="btn btn-primary">Join Room</button>
                     </div>
                 </div>
                 <div id="roomDetails"></div>
-                <p1>'roomKey'</p1>
             </div>
         </div>
     </div>
@@ -30,40 +29,40 @@
     <script>
       
 
-        async function createRoom() {
+        async function createRoom() { //function to recive room key from backend and then create the room within the front end 
             try {
-                const response = await fetch(`/create-room`, { method: 'POST' });
+                const response = await fetch(`/create-room`, { method: 'POST' }); //create room is taken from backend in raw data
                 const data = await response.json();
                 console.log('received key', data.roomKey)
-                document.getElementById('roomKey').textContent = `Room Key: ${data.roomkey}`;
+                document.getElementById('roomKey').textContent = `Room Key: ${data.roomkey}`; //display the room key to the user who made the room
             } catch (error) {
                 console.error('Error creating room:', error);
             }
         }
 
-        async function joinRoom() {
+        async function joinRoom() { //takes the data from both room key and the user name
             const username = document.getElementById('username').value;
             const roomKey = document.getElementById('joinKey').value;
             
 
-            if (!username || !roomKey) {
+            if (!username || !roomKey) { //check if both are empty 
                 alert("Please enter username and room key");
                 return;
             }
 
-            try {
+            try { //make post request to backend to get /join-room data
                 const response = await fetch(`/join-room`, {
                     method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, roomKey })
+                    headers: { "Content-Type": "application/json" }, //choose the given rquest headers
+                    body: JSON.stringify({ username, roomKey }) // Send the username and roomKey as JSON in the request 
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    document.getElementById('roomDetails').textContent = `Users in room: ${data.users.join(', ')}`;
+                if (response.ok) { //if code is correct run following
+                    const data = await response.json(); //parse data as json 
+                    document.getElementById('roomDetails').textContent = `Users in room: ${data.users.join(', ')}`; //display a list of users within the room
                 } else {
                     const errorData = await response.json();
-                    alert(errorData.message);
+                    alert(errorData.message); //if response is not successful parse the error message from the server
                 }
             } catch (error) {
                 console.error("Error joining the room:", error);

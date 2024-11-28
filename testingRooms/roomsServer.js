@@ -8,35 +8,35 @@ app.use(bodyParser.json());
 app.use(cors());
 const path = require('path')
 
-// console.log("listening on port");
+
 app.listen(PORT, ()=>{
     console.log('listening on port' + PORT)
 })
 
-const rooms = {}; // MongoDB will be added when needed
+const rooms = {}; // MongoDB will be added when needed, is being stored localy for now
 
 
-// app.use(express.static('roomJoin.html')) //listening to the folder
+
 
 app.get('/', (req, res)=>{
-    res.sendFile(path.join(__dirname, '/roomJoin.html'));
+    res.sendFile(path.join(__dirname, '/roomJoin.html')); //sends the user straight to the frontend page
 })
 
-app.post('/create-room', (req, res) => {
-    const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase();
-    console.log('room code',roomKey)
+app.post('/create-room', (req, res) => { //creates the room when button is pressed
+    const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase(); // randomises a code to include numbers, lowercase and uppercase numbers
+    console.log('room code',roomKey) 
     rooms[roomKey] = { users: [] };
-    res.json({ roomkey:roomKey });
+    res.json({ roomkey:roomKey }); //return json data to the frontend
 });
 
-app.post('/join-room', (req, res) => {
+app.post('/join-room', (req, res) => { 
     const { roomKey, username } = req.body;
 
 app.get('roomKey', (req, res) => {
-    const { roomKey } = req.params;
+    const { roomKey } = req.params; //checks to see room key matches
 
     if (!rooms[roomKey]) {
-        return res.json({ message: 'Room not found' });
+        return res.json({ message: 'Room not found' }); //if not returns not found message
     }
     res.json({ users: rooms[roomKey].users });
 });
