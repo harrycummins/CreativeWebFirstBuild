@@ -47,7 +47,7 @@ function checkLoggedIn(request, response, nextAction){
 require('dotenv').config()
 
 let myPassword= process.env.MY_SECRET_PASSWORD
-console.log(myPassword)
+console.log(myPassword)//env work
 
 
 app.use(express.static('public')) //accsessing the public server to reach the home.html file
