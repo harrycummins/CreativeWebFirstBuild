@@ -12,40 +12,43 @@ app.listen(PORT, ()=>{
 
 //using the daily api to create a video room
 
-const DAILY_API_KEY = 'c05ef2783ddb563f9130765177d391c31a89e811c577899a87107af7449709f3'; //api key provided from daily
-
-app.post('/create-room', async (req, res) => { //code was taken from a start up guide within the daily api website
-    try {
-        const roomName = req.body.name || 'defaultRoomName'; //name of the room given by daily - not loading correct
-        const response = await axios.post(
-            'https://teachingapplication.daily.co/testingRooms',
-            {
-                name: roomName, // Room name to be created //code taken from daily article
-                properties: {
-                    enable_chat: true,
-                    enable_screenshare: true,
-                },
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${c05ef2783ddb563f9130765177d391c31a89e811c577899a87107af7449709f3}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        res.json(response.data); // Return created room details
-    } catch (error) {
-        console.error('Error creating room:', error.response?.data || error.message);
-        res.status(500).send('Failed to create room');
-    }
-});
-
-
 //login system
 //was following the same steps used within class tutorials
 
 app.use(bodyParser.json());
 app.use(cors());
+
+const cookieParser=require('cookie-parser')
+const sessions=require('express-session')
+
+app.use(cookieParser())
+
+const threeMinutes= 3 * 60 * 1000
+const oneHour= 60 * 60 * 1000
+
+app.use(sessions({
+    secret:'secret ticket',
+    cookie: {maxAge:threeMinutes},
+    saveUninitialized: true,
+    resave: false,
+}))
+
+function checkLoggedIn(request, response, nextAction){
+    if(request.session){
+        if(request.session.username){
+            nextAction()
+        }else {
+            request.session.destroy()
+            response.sendFile(path.join(__dirname, './views', 'login.html'))
+        }
+    }
+}
+
+require('dotenv').config()
+
+let myPassword= process.env.MY_SECRET_PASSWORD
+console.log(myPassword)
+
 
 app.use(express.static('public')) //accsessing the public server to reach the home.html file
 
@@ -88,14 +91,14 @@ app.post('/login', (request, response)=>{
    let givenUsername=request.body.username 
    let givenPassword=request.body.password
    if(userData.checkPassword(givenUsername, givenPassword)){
-    
     console.log('these mathc')
+    request.session.username=givenUsername
+
     response.redirect('/home'); //teslls the user login works and directs them back to the home page
     
-    
-
    } else{
     console.log('wrong')
+    request.session.destroy()
     response.send('invalid')
    }
     
@@ -106,6 +109,11 @@ app.post('/login', (request, response)=>{
 
 app.get('/logOut', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'logOut.html'))
+})
+
+app.post('/logOut', (request,response)=>{
+    response.sendFile(path.join(__dirname, '/views', 'login.html'))
+    equest.session.destroy()
 })
 
 app.get('/back', (request,response)=>{
@@ -124,6 +132,8 @@ app.get('/roomJoin', (request, response) => {
     response.sendFile(path.join(__dirname, '/testingRooms', 'roomJoin.html'))
 })
 
-app.get('/calls', (request, response) => {
+app.get('/calls', checkLoggedIn, (request, response) => {
     response.sendFile(path.join(__dirname, '/views', 'calls.html'))
-})
+}) //cehck user logged in
+
+

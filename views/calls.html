@@ -11,8 +11,70 @@
     <li class="nav-item">
         <a class="nav-link" href="/create-room">Testing Rooms</a>
     </li>
-    <button id="start-screen-share">Start Screen Share</button>
-    <button id="stop-screen-share">Stop Screen Share</button>
+    <!-- <button id="start-screen-share">Start Screen Share</button>
+    <button id="stop-screen-share">Stop Screen Share</button> -->
+
+    <body>
+        <div style="width:80%;background: grey;margin: auto;">
+            <video id="video" autoplay playsinline muted></video>
+        </div>
+        <div style="width:80%;margin: auto;padding-top:10px ;">
+            <button class="btn btn-primary" id="start"> Start Screen Sharing</button>
+            <button class="btn btn-secondary" id="stop"> Stop</button>
+        </div>
+
+        <!--<script>
+            // const videoElem = document.getElementById("video");
+            // const startElem = document.getElementById("start");
+            // const stopElem = document.getElementById("stop");
+            // // Options for getDisplayMedia()
+            // var displayMediaOptions = {
+            //     video: {
+            //         cursor: "always",
+            //         height: 1000,
+            //         width: 1200
+            //     },
+            //     audio: false
+            // };
+            // // Set event listeners for the start and stop buttons
+            // startElem.addEventListener("click", function (evt) {
+            //     startCapture();
+            // }, false);
+            // stopElem.addEventListener("click", function (evt) {
+            //     stopCapture();
+            // }, false);
+            // async function startCapture() {
+            //     try {
+            //         videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+            //         dumpOptionsInfo();
+            //     } catch (err) {
+            //         console.error("Error: " + err);
+            //     }
+            // }
+    
+            // function stopCapture(evt) {
+            //     let tracks = videoElem.srcObject.getTracks();
+            //     tracks.forEach(track => track.stop());
+            //     videoElem.srcObject = null;
+            // }
+    
+            // function dumpOptionsInfo() {
+            //     const videoTrack = videoElem.srcObject.getVideoTracks()[0];
+            //     console.info("Track settings:");
+            //     console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
+            //     console.info("Track constraints:");
+            //     console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
+            // }
+        </script>
+
+
+
+
+
+
+
+
+
 
     <script> //script is taken from the daily api start up page
         // Fetch the room URL from the backend
@@ -55,6 +117,6 @@
         });
     </script>
 
-    <script src="https://unpkg.com/@daily-co/daily-js@latest"></script>
+    <script src="https://unpkg.com/@daily-co/daily-js@latest"></script> -->
 </body>
 </html>
