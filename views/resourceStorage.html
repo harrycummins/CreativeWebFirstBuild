@@ -29,10 +29,10 @@
 
       <!-- Sidebar -->
   <nav class="sidebar bg-dark text-white d-flex flex-column p-3">
-    <h3 class="mb-4">My App</h3>
+    <h3 class="mb-4">Resource Storage</h3>
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a href="#" class="nav-link text-white">Dashboard</a>
+        <a href="/toDo" class="nav-link text-white">To Do List</a>
       </li>
       <li class="nav-item">
         <a href="/calender" class="nav-link text-white">calender</a>
@@ -61,12 +61,12 @@
         <input type="text" id="name" name="name" required><br><br>
     </div>
     <div class="col-md-6">
-        <label for="date">Email:</label>
+        <label for="date">Date:</label>
         <input type="date" id="date" name="date" required><br><br>
     </div>
-     <div class="col-md-8">
-    <label for="inputPassword4" class="form-label">Password</label>
-    <input type="password" class="form-control" id="inputPassword4">
+     <div class="col-md-10">
+    <label for="lessonDetail" class="form-label">Lesson Details</label>
+    <input type="lessonDetail" class="form-control" id="lessonDetail">
   </div>
   </div>
   <button type = "favourite">Favourite</button>
@@ -93,7 +93,8 @@
 
         const formData = {
             name: document.getElementById('name').value,
-            email: document.getElementById('date').value,
+            date: document.getElementById('date').value,
+            lessonDetail: document.getElementById('lessonDetail').value,
         };
 
         try {
@@ -120,7 +121,9 @@
 
             newSubmission.innerHTML = `
                 <p><strong>Name:</strong> ${result.data.name}</p>
-                <p><strong>Email:</strong> ${result.data.date}</p>
+                <p><strong>Date:</strong> ${result.data.date}</p>
+                <p><strong>lesson Details:</strong> ${result.data.lessonDetail}</p>
+
             `;
 
             submissionsDiv.appendChild(newSubmission);

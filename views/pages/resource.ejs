@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Page</title>
+    <style>
+        body {
+          display: flex;
+          min-height: 100vh;
+          overflow-x: hidden;
+        }
+        .sidebar {
+          min-width: 250px;
+          max-width: 250px;
+          height: 100vh;
+        }
+        .content {
+          flex-grow: 1;
+          padding: 20px;
+        }
+        .html{
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar bg-dark text-white d-flex flex-column p-3">
+        <h3 class="mb-4">My App</h3>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">Settings</a>
+            </li>
+            <li class="nav-item">
+                <a href="/home.html" class="nav-link text-white">Back to home</a>
+            </li>
+            <button class="btn btn-primary d-md-none" data-bs-toggle="collapse" data-bs-target="#sidebar">
+                Toggle Sidebar
+            </button>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Welcome, <%= username %>!</h1> <!-- Display the username dynamically -->
+        <p>Here you can access your resources.</p>
+    </div>
+</body>
+</html>

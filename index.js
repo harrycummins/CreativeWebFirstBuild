@@ -10,6 +10,8 @@ app.listen(PORT, ()=>{
     console.log('listening on port' + PORT)
 })
 
+
+
 //using the daily api to create a video room
 
 //login system
@@ -112,6 +114,7 @@ app.post('/login', async (request, response)=>{
     
 })
 
+app.set('view engine', 'ejs')
 
 //sending the user to certein views throughout the login section
 
@@ -121,7 +124,7 @@ app.get('/logOut', (request,response)=>{
 
 app.post('/logOut', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'login.html'))
-    equest.session.destroy()
+    guest.session.destroy()
 })
 
 app.get('/back', (request,response)=>{
@@ -144,15 +147,21 @@ app.get('/calls', checkLoggedIn, (request, response) => {
     response.sendFile(path.join(__dirname, '/views', 'calls.html'))
 }) //cehck user logged in
 
-app.get('/calender', checkLoggedIn, (request, response)=>{
-    response.sendFile(path.join (__dirname, '/views', 'calender.html') )
-})
 
 //teachres pages
 
 app.get('/resourceStorage', checkLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, '/views' ,'resourceStorage.html')); // connecting to the login page when localhost is loaded
 });
+
+app.get('/calender', checkLoggedIn, (request, response)=>{
+    response.sendFile(path.join (__dirname, '/views', 'calender.html') )
+})
+
+app.get('/toDo', checkLoggedIn, (request, response)=>{
+    response.sendFile(path.join (__dirname, '/views', 'toDo.html') )
+})
+
 // app.get('/'),(request,response) =>{
 //     console.log(request.body)
 //  }
@@ -168,5 +177,7 @@ app.post('/submit-form', (req, res) => {
         data: formData, // Send back the submitted data
     });
 });
+
+
 
 // const postData=require('/models/lessonPlan.js')
