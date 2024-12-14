@@ -1,0 +1,21 @@
+html{
+    background-color: #FFFFFF;
+    font-family: 'Abel', sans-serif;
+  }
+
+
+
+
+  /* @media screen and (max-width: 719px) {    
+    .move-text { 
+      display: none; } 
+      .icon-bar{
+        display: none;
+      }
+      li{
+        display: none;
+      }
+      html{
+      background-color: #FFFFaF;
+      }
+    } */

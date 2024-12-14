@@ -49,10 +49,18 @@ require('dotenv').config()
 let myPassword= process.env.MY_SECRET_PASSWORD
 console.log(myPassword)//env work
 
+const mongoPassword=process.env.MONGODB_PASSWORD
+
+const mongoose=require('mongoose')
+const myDataBaseName= 'blogHarry'
+const connecttionString=`mongodb+srv://CCO6005-00:${mongoPassword}@cluster0.lpfnqqx.mongodb.net/${myDataBaseName}?retryWrites=true&w=majority`
+mongoose.connect(connecttionString)
+
+
 
 app.use(express.static('public')) //accsessing the public server to reach the home.html file
 
-app.use(express.urlencoded({extended:false})) //parsing data
+app.use(express.urlencoded({extended:false})) //parsig data
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/views', 'login.html')); // connecting to the login page when localhost is loaded
@@ -69,11 +77,11 @@ app.get('/register', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'register.html'))
 })
 
-app.post('/register',(request,response)=>{ //recieving the data when user creates an account
+app.post('/register',async (request,response)=>{ //recieving the data when user creates an account
     let givenUsername=request.body.username 
     let givenPassword=request.body.password
 
-    if(userData.addNewUser(givenUsername, givenPassword)){ //registers the new user localy
+    if(await userData.addNewUser(givenUsername, givenPassword)){ //registers the new user localy
         console.log('registration sucsessful')
         response.redirect('/login');
     }else{
@@ -87,10 +95,10 @@ app.get('/login', (request,response)=>{
 })
 
 
-app.post('/login', (request, response)=>{
+app.post('/login', async (request, response)=>{
    let givenUsername=request.body.username 
    let givenPassword=request.body.password
-   if(userData.checkPassword(givenUsername, givenPassword)){
+   if(await userData.checkPassword(givenUsername, givenPassword)){
     console.log('these mathc')
     request.session.username=givenUsername
 
@@ -108,7 +116,7 @@ app.post('/login', (request, response)=>{
 //sending the user to certein views throughout the login section
 
 app.get('/logOut', (request,response)=>{
-    response.sendFile(path.join(__dirname, '/views', 'logOut.html'))
+    response.sendFile(path.join(__dirname, '/vienws', 'logOut.html'))
 })
 
 app.post('/logOut', (request,response)=>{
@@ -136,4 +144,29 @@ app.get('/calls', checkLoggedIn, (request, response) => {
     response.sendFile(path.join(__dirname, '/views', 'calls.html'))
 }) //cehck user logged in
 
+app.get('/calender', checkLoggedIn, (request, response)=>{
+    response.sendFile(path.join (__dirname, '/views', 'calender.html') )
+})
 
+//teachres pages
+
+app.get('/resourceStorage', checkLoggedIn, (req, res) => {
+    res.sendFile(path.join(__dirname, '/views' ,'resourceStorage.html')); // connecting to the login page when localhost is loaded
+});
+// app.get('/'),(request,response) =>{
+//     console.log(request.body)
+//  }
+// Route to handle form submission
+app.post('/submit-form', (req, res) => {
+    const formData = req.body;
+
+    console.log('Received form data:', formData);
+
+    // Send response to the frontend
+    res.status(200).json({
+        message: 'Form data received successfully!',
+        data: formData, // Send back the submitted data
+    });
+});
+
+// const postData=require('/models/lessonPlan.js')
