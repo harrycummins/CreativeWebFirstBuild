@@ -46,16 +46,16 @@ function checkLoggedIn(request, response, nextAction){
     }
 }
 
-require('dotenv').config()
+require('dotenv').config() //require env 
 
-let myPassword= process.env.MY_SECRET_PASSWORD
+let myPassword= process.env.MY_SECRET_PASSWORD //geting secret password from env file
 console.log(myPassword)//env work
 
 const mongoPassword=process.env.MONGODB_PASSWORD
 
 const mongoose=require('mongoose')
 const myDataBaseName= 'blogHarry'
-const connecttionString=`mongodb+srv://CCO6005-00:${mongoPassword}@cluster0.lpfnqqx.mongodb.net/${myDataBaseName}?retryWrites=true&w=majority`
+const connecttionString=`mongodb+srv://CCO6005-00:${mongoPassword}@cluster0.lpfnqqx.mongodb.net/${myDataBaseName}?retryWrites=true&w=majority` //connect to the mongo databas dynamicly adding password and name 
 mongoose.connect(connecttionString)
 
 
@@ -162,10 +162,8 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
     response.sendFile(path.join (__dirname, '/views', 'toDo.html') )
 })
 
-// app.get('/'),(request,response) =>{
-//     console.log(request.body)
-//  }
-// Route to handle form submission
+//form to handle data from lesson planner and send back the data 
+
 app.post('/submit-form', (req, res) => {
     const formData = req.body;
 
