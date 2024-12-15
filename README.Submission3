@@ -1,1 +1,9 @@
-hi
+Submit a link to a github repo that you are using for submitting your work-in-progress app
+
+The submission should include:
+
+README with short but clearly articulated project concept and proposed technical architecture (which major technologies or approaches to web are you using?)
+A basic full stack prototype demonstrating shared data and state between front and back end. It is not expects that all features are implemented front and back end, only that you demonstrate some successful interactions between frontend and backend and a database.
+Novel features, plus some indication of styling and UX considerations should be evident 
+
+The concept for my web application is a teaching hub where teachers can construct lesson plans, to do lists aswell as host sessions to the class using a random key where users can join the share screen. This means fast acsess and not loads of menus for the user to have to interact with which i found to be frustrating when using other platforms such as teams .
