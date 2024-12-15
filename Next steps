@@ -1,0 +1,8 @@
+Important:
+get teacher lesson plans working with mongo aswell as set up the to do list with mongo aswell as favourties
+style the site( mianly home page)
+
+Stretch
+change the radnom gen code to be a communictation tab instead of a calls features, a less formal and quicker way to speak to students (websockets)
+get the google calander api implimented
+change logged in button to logged in (ejs)

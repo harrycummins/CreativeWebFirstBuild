@@ -108,12 +108,12 @@
 
             const result = await response.json();
 
-            // Display the success message
-            const responseMessage = document.getElementById('responseMessage');
+        
+            const responseMessage = document.getElementById('responseMessage');     //  success message
             responseMessage.textContent = result.message;
 
-            // Append the new submission to the submissions container
-            const submissionsDiv = document.getElementById('submissions');
+            
+            const submissionsDiv = document.getElementById('submissions'); //new submission to the submissions container
             const newSubmission = document.createElement('div');
             newSubmission.style.border = '1px solid #ccc';
             newSubmission.style.padding = '10px';
@@ -128,7 +128,7 @@
 
             submissionsDiv.appendChild(newSubmission);
 
-            // Clear the form
+            // Clear form
             form.reset();
         } catch (error) {
             console.error('Error submitting form:', error);
