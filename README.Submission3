@@ -6,14 +6,15 @@ README with short but clearly articulated project concept and proposed technical
 A basic full stack prototype demonstrating shared data and state between front and back end. It is not expects that all features are implemented front and back end, only that you demonstrate some successful interactions between frontend and backend and a database.
 Novel features, plus some indication of styling and UX considerations should be evident 
 
-The concept for my web application is a teaching hub where teachers can construct lesson plans, to do lists aswell as host sessions to the class using a random key where users can join the share screen. This means fast acsess and not loads of menus for the user to have to interact with which i found to be frustrating when using other platforms such as teams. The approach i am taking is trying to simplify the user experience , as within similar applications its difficult to reach the join page where its almost hidden away. On the fronstend react is used to handle dyncamic content such as the lessons appearing within the screen after the user impliments them. Bootstrap is also used within the frontend as it allows for fast ui development aswell as make elements such as the nav bar, easy to make responsive. Within the backend i am using node.js within the backend aswell as a mongo db database to store a variety of data throughout the site.
+The concept for my web application is a teaching hub where teachers can construct lesson plans, to do lists aswell as host sessions to the class using a random key where users can join the share screen. This means fast acsess and not loads of menus for the user to have to interact with which i found to be frustrating when using other platforms such as teams. The approach i am taking is trying to simplify the user experience , as within similar applications its difficult to reach the join page where its almost hidden away. On the fronstend react will be used to handle dyncamic content such as the lessons appearing within the screen after the user impliments them. Bootstrap is also used within the frontend as it allows for fast ui development aswell as make elements such as the nav bar, easy to make responsive. Within the backend i am using node.js aswell as a mongo db database to store a variety of data throughout the site.
 
 teachers section - 
-the teachers section is only acsessable to users who are logged in. This is done through the use of cookies on the client side to track when a user is logged in and ensure theres state within the site. This is the main part of the application where the main functionality is. One of the sections is a place where the teachers can prepare lessons with documents aswell as a structure which will be stored within mongo db. Another section will allow the users to conncet there google account and add events to there google calander through the use of the google calender api.
-to do list
-run this all through index
-random gen ran through roomsServer.js
+the teachers section is only acsessable to users who are logged in. This is done through the use of cookies on the client side to track when a user is logged in and ensure theres state within the site. This is the main part of the application where the main functionality is. One of the sections is a place where the teachers can prepare lessons with documents aswell as a structure which will be stored within mongo db. Another section will allow the users to conncet there google account and add events to there google calander through the use of the google calender api. To run this section ensure index.js is ran and the user is logged in.
 
-how to run
+Database - 
+within the current prototype the only connection to mongo DB is present within the login page. To run this section use index.js
+
+Random Key Room Generator -
+To run this section use the roomsServer.js terminal as it is within a seperate folder to the rest of the project.
 
 
