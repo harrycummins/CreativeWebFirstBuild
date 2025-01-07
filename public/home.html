@@ -5,6 +5,18 @@
     <title>title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel = "/css/main.min.css" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  
+    <style>
+      .custom-badge {
+        background-color: #58295a; /* Tomato red */
+        color: white;
+      
+        
+      }
+    </style>
+  
 </head>
 <body>
     
@@ -13,6 +25,7 @@
     <h1>Website Name</h1>
     <p>The easy way to learn digitally</p> 
   </div>
+  
   
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light pb-5 ">
@@ -24,7 +37,7 @@
           
           <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <ul class="navbar-nav me-auto mb-3 mb-lg-0">
-              <img src="img_avatar1.png" alt="Logo" style="width:40px;" class="rounded-pill">
+              <img src="teaching-image.png" alt="Logo" style="width:40px;" class="rounded-pill">
     </a>
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/calls">calls</a>
@@ -45,14 +58,7 @@
           </div>
         </div>
       </nav>
-      <div class="container">
-<div class="bg-primary border">
-      <blockquote class="blockquote border  ">
-        <p class="text-white ">For 50 years, WWF has been protecting the future of nature. The world's leading conservation organization, WWF works in 100 countries and is supported by 1.2 million members in the United States and close to 5 million globally.</p>
-        <footer class="blockquote-footer">From WWF's website</footer>
-      </div>
-    </div>
-
+     
 
 
         <!-- <div class="row align-items-start mt-5 bg-light">
@@ -61,25 +67,75 @@
       </div> -->
 
       <div class="container bg-light">
-        <div class="row align-items-start mt-5">
-            <div class="col-m-6 col-sm-6" div clas="border">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero iure repudiandae minima debitis veniam ipsum blanditiis animi adipisci nobis nemo nulla dignissimos, laborum nostrum qui mollitia accusamus excepturi ut enim.Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia doloribus similique dolorem cupiditate quasi? Possimus harum similique aut optio cumque esse magnam officia ab accusantium quas incidunt, laborum odit temporibus.</div>
-            <div class="col-m-6 col-sm-6"><img src="elementor-placeholder-image.webp" alt="image" style="width:400px;">
+        <div class="row align-items-start mt-5 font-family: 'Roboto', sans-serif;">
+            <div class="col-m-6 col-sm-6" div clas="border">
+              <h class="fs-1 text-info">Connect and Plan with ease</h>
+              <p class ="fs-1">An all in one platform where users can connect together</p>
+              <p class="fs-3 text-info">-An essential tool for any teacher</p>
+            </div>
+            <div class="col-m-6 col-sm-6"><img src="teaching-image.png" alt="image" style="width:600px;">
             </a></div>
         </div>
       </div>
 
-        <div class=" bg-light">
-          <div class="row align-items-start mt-5">
-            <div class="col-sm-4 bg-primary">
-              <h1>header</h1>
-              <p>Why us?</p>
-              <span class="badge rounded-pill bg-success">Easy</span>
-              <span class="badge rounded-pill bg-success">Success</span>
-              <span class="badge rounded-pill bg-success">Success</span>
+      <div class="container">
+        <div class="border border-light p-4">
+              <blockquote class="blockquote border  ">
+                <p class="text-black ">For 50 years, WWF has been protecting the future of nature. The world's leading conservation organization, WWF works in 100 countries and is supported by 1.2 million members in the United States and close to 5 million globally.</p>
+                <footer class="blockquote-footer">From WWF's website</footer>
+              </div>
             </div>
-            <div class="col-sm-8" div clas="border">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero iure repudiandae minima debitis veniam ipsum blanditiis animi adipisci nobis nemo nulla dignissimos, laborum nostrum qui mollitia accusamus excepturi ut enim.Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia doloribus similique dolorem cupiditate quasi? Possimus harum similique aut optio cumque esse magnam officia ab accusantium quas incidunt, laborum odit temporibus.</div>
+            
+        <div class=" bg-light">
+          <div class="row align-items-start mt-5" style="background-color: #8747ff; color: white" >
+            <div class="col-sm-4 font-family: 'Roboto', sans-serif; row justify-content-center">
+              <p class ="fs-1 text-center">Why us?</p>
+              <span class="badge custom-badge fs-4 d-block mb-2 w-50 mx-3">A hub of productivity</span>
+              <span class="badge custom-badge fs-4 d-block mb-2 w-50 mx-3">Easy acess</span>
+              <span class="badge custom-badge fs-4 d-block mb-2 w-50 mx-3">Custo Badge</span>
+              <span class="badge custom-badge fs-4 d-block mb-2 w-50 mx-3">Custom Badge</span>
+            </div>
+        
+            <div class="col-sm-6 col-sm-4 font-family: 'Roboto', sans-serif; justify-content-center">
+              <h2>How to Add Space Between Elements in Bootstrap</h2>
+              <p>
+                When designing layouts in Bootstrap, managing spacing between elements is essential for a clean, organized look. Below are several ways to add space between elements such as badges, buttons, or other components:
+              </p>
+              <ul>
+                <li><strong>Spacing Utilities:</strong> Use the >m-{side}-{size}> and >p-{side}-{size}> classes to easily add margin and padding.
+                  <ul>
+                    <li>Example: >mr-3> for adding right margin or >mx-3> for horizontal margin between elements.</li>
+                  </ul>
+                </li>
+                <li><strong>Flexbox Utilities:</strong> Use the >gap> property for consistent spacing between flex items (available in Bootstrap 5+).
+                  <ul>
+                    <li>Example: >gap-3> to add equal space between flex items.</li>
+                  </ul>
+                </li>
+                <li><strong>Grid System Gutter Classes:</strong> When using the grid layout, apply the >g-* > classes to control the space between columns.
+                  <ul>
+                    <li>Example: >g-3> to add gutter space between columns.</li>
+                  </ul>
+                </li>
+                <li><strong>Inline Styles:</strong> For custom spacing, use inline styles like > or >padding to modify space on specific elements.
+                  <ul>
+                    <li>Example: /code> to manually set space between elements.</li>
+                  </ul>
+                </li>
+              </ul>
+              <p>
+                Each of these methods provides flexibility, allowing you to adjust spacing easily and create clean, responsive layouts.
+              </p>
+            </div>
               
-       
+            <figure>
+              <blockquote class="blockquote">
+                <p>A well-known quote, contained in a blockquote element.</p>
+              </blockquote>
+              <figcaption class="blockquote-footer">
+                Someone famous in <cite title="Source Title">Source Title</cite>
+              </figcaption>
+            </figure>
 
 
         <div class="col-3 bg-light p-3 border ">
