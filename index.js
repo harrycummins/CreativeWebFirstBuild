@@ -5,6 +5,7 @@ const path = require('path')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
+const { google } = require('googleapis');
 
 app.listen(PORT, ()=>{
     console.log('listening on port' + PORT)
@@ -19,6 +20,7 @@ app.listen(PORT, ()=>{
 
 app.use(bodyParser.json());
 app.use(cors());
+
 
 const cookieParser=require('cookie-parser')
 const sessions=require('express-session')
@@ -64,9 +66,9 @@ app.use(express.static('public')) //accsessing the public server to reach the ho
 
 app.use(express.urlencoded({extended:false})) //parsig data
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/views', 'login.html')); // connecting to the login page when localhost is loaded
-});
+// //app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, '/views', 'login.html')); // connecting to the login page when localhost is loaded
+// });
 
 app.get('/app', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'app.html'))
@@ -162,20 +164,97 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
     response.sendFile(path.join (__dirname, '/views', 'toDo.html') )
 })
 
-//form to handle data from lesson planner and send back the data 
+//form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
+app.get('/views/resourceStorage', async (req, res) => {
+    const username = req.query.username;
+  
+    try {
+      const user = await userData.findOne({ username: username });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json({
+        lessonName: user.userLessonPlan.lessonName,
+        lessonDate: user.userLessonPlan.lessonDate,
+        lessonDetails: user.userLessonPlan.lessonDetails
+      });
+    } catch (err) {
+      console.error('Error retrieving lesson plan:', err);
+      res.status(500).json({ message: 'Error retrieving lesson plan data' });
+    }
+  });
 
-app.post('/submit-form', (req, res) => {
-    const formData = req.body;
 
-    console.log('Received form data:', formData);
+//google calender
 
-    // Send response to the frontend
-    res.status(200).json({
-        message: 'Form data received successfully!',
-        data: formData, // Send back the submitted data
+// )
+//   })
+
+//   app
+// // const postData=require('/models/lessonPlan.js')
+const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,        // Loaded from the .env file
+    process.env.SECRET_ID,    // Loaded from the .env file
+    process.env.REDIRECT      // Loaded from the .env file
+  );
+  
+  // Redirect user to Google for authentication
+  app.get('/', (req, res) => {
+    const url = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: 'https://www.googleapis.com/auth/calendar.readonly',
     });
-});
-
-
-
-// const postData=require('/models/lessonPlan.js')
+    res.redirect(url);
+  });
+  
+  // Handle redirect after user grants permission
+  app.get('/redirect', (req, res) => {
+    const code = req.query.code;
+    oauth2Client.getToken(code, (err, tokens) => {
+      if (err) {
+        console.error('Cannot get token', err);
+        res.send('Error');
+        return;
+      }
+      oauth2Client.setCredentials(tokens);
+      res.send('Logged in');
+    });
+  });
+  
+  // Fetch calendar list
+  app.get('/calendars', (req, res) => {
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    calendar.calendarList.list({}, (err, response) => {
+      if (err) {
+        console.error('Error fetching calendars', err);
+        res.end('Error!');
+        return;
+      }
+      const calendars = response.data.items;
+      res.json(calendars);
+    });
+  });
+  
+  // Fetch events from a calendar
+  app.get('/events', (req, res) => {
+    const calendarId = req.query.calendar || 'primary';
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    calendar.events.list({
+      calendarId,
+      timeMin: (new Date()).toISOString(),
+      maxResults: 15,
+      singleEvents: true,
+      orderBy: 'startTime',
+    }, (err, response) => {
+      if (err) {
+        console.error('Error fetching events', err);
+        res.send('Error');
+        return;
+      }
+      const events = response.data.items;
+      res.json(events);
+    });
+  });
+  

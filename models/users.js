@@ -18,6 +18,12 @@ const {Schema, model} = mongoose
 const userScheme =  new Schema ({
     username: String,
     password: String,
+    userLessonPlan: {
+        lessonName:[String],
+        lessonDate:[Number],
+        lessonDetails:[String],
+    }
+
 })
 
 const userData = model('User', userScheme)
@@ -56,8 +62,38 @@ async function addNewUser(givenUser,givenPassword){ //add new user
     }
 }
 
+   async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
+  try {
+    // Update the user's lesson plan by pushing the new lesson data into the arrays
+    await User.findOneAndUpdate(
+      { username: username }, // Find the user by username
+      {
+        $push: {
+          lessonName: lessonName,
+          lessonDate: lessonDate,
+          lessonDetails: lessonDetails
+        }
+      },
+      { new: true } // Return the updated document
+    );
+
+    console.log('Lesson plan added successfully');
+  } catch (err) {
+    console.error("Error: " + err);
+  }
+}
+
+    
+
+
+
+   
+
+
+
 module.exports = { //exports all fucntions into index.js
     checkUser,
     checkPassword,
-    addNewUser
+    addNewUser,
+    addNewPlan,
 };

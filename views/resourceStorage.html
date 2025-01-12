@@ -138,6 +138,111 @@
     });
 </script>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Lesson Plan</title>
+</head>
+<body>
+  <h1>Welcome, <span id="username">User</span></h1>
+  <h2>Your Lesson Plan</h2>
+  <table id="lesson-plan-table">
+    <thead>
+      <tr>
+        <th>Lesson Name</th>
+        <th>Lesson Date</th>
+        <th>Lesson Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Lesson plan data will go here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Assuming the username is passed from the server, you can dynamically insert it
+    const username = "someUsername"; // Replace with actual user data, or from session
+
+    // Fetch the user's lesson plan data from the backend
+    fetch(`/views/resourceStorage?username=${username}`, { //error is HERE
+      method: 'GET',
+      credentials: 'include'  // If you are using cookies for authentication
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Accessing the lesson data
+        const lessonPlanTable = document.getElementById('lesson-plan-table').getElementsByTagName('tbody')[0];
+
+        data.lessonName.forEach((lesson, index) => {
+          const row = lessonPlanTable.insertRow();
+          
+          const cell1 = row.insertCell(0);
+          const cell2 = row.insertCell(1);
+          const cell3 = row.insertCell(2);
+
+          // Insert the lesson data into the table cells
+          cell1.textContent = lesson;
+          cell2.textContent = new Date(data.lessonDate[index]).toLocaleDateString();
+          cell3.textContent = data.lessonDetails[index];
+        });
+      })
+      .catch(error => console.error('Error fetching lesson plan:', error));
+  </script>
+</body>
+
+
+
+
+<form id="lesson-form">
+  <label for="lesson-name">Lesson Name:</label>
+  <input type="text" id="lesson-name" required><br>
+  
+  <label for="lesson-date">Lesson Date:</label>
+  <input type="date" id="lesson-date" required><br>
+  
+  <label for="lesson-details">Lesson Details:</label>
+  <textarea id="lesson-details" required></textarea><br>
+
+  <button type="submit">Add Lesson</button>
+</form>
+
+<script>
+
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const lessonName = document.getElementById('lesson-name').value;
+    const lessonDate = new Date(document.getElementById('lesson-date').value).getTime();
+    const lessonDetails = document.getElementById('lesson-details').value;
+
+    // Send POST request to add the lesson plan
+    fetch('/addLessonPlan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: 'someUsername',  // Replace with actual username or get it from session
+        lessonName: lessonName,
+        lessonDate: lessonDate,
+        lessonDetails: lessonDetails
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert('Lesson added successfully');
+      // Optionally, you could also update the table here without a page reload
+    })
+    .catch(error => console.error('Error adding lesson:', error));
+  });
+</script>
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>

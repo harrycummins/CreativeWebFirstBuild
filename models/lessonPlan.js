@@ -21,8 +21,8 @@ function addNewPlan(username, message){
     let newPost={
         lessonName: lessonName,
         date: date,
-        lessonDetail, message
-        otherDetails, message
+        lessonDetail, message,
+        otherDetails, message,
     }
    
 }
