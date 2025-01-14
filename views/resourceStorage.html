@@ -50,7 +50,7 @@
     </ul>
     
   </nav>
-  
+<!--   
       <div class="container">
         <h1>lesson Planner</h1>
 <h2>Submit Your Data</h2>
@@ -72,10 +72,10 @@
   <button type = "favourite">Favourite</button>
   <button type="submit">Submit</button>
 </form>
-<!-- <nav id="sidebar" class="collapse sidebar bg-dark text-white p-3 d-md-block">
+<nav id="sidebar" class="collapse sidebar bg-dark text-white p-3 d-md-block"> -->
     ...
-  </nav>
-     -->
+  <!-- </nav> -->
+    
    
 </form>
 
@@ -85,66 +85,6 @@
 <p id="responseMessage" style="margin-top: 10px; color: green;"></p>
 </div>
 
-<script>
-    const form = document.getElementById('myForm');
-
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        const formData = {
-            name: document.getElementById('name').value,
-            date: document.getElementById('date').value,
-            lessonDetail: document.getElementById('lessonDetail').value,
-        };
-
-        try {
-            const response = await fetch('/submit-form', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const result = await response.json();
-
-        
-            const responseMessage = document.getElementById('responseMessage');     //  success message
-            responseMessage.textContent = result.message;
-
-            
-            const submissionsDiv = document.getElementById('submissions'); //new submission to the submissions container
-            const newSubmission = document.createElement('div');
-            newSubmission.style.border = '1px solid #ccc';
-            newSubmission.style.padding = '10px';
-            newSubmission.style.marginBottom = '10px';
-
-            // taken from stack overflow
-            newSubmission.innerHTML = ` 
-                <p><strong>Name:</strong> ${result.data.name}</p>
-                <p><strong>Date:</strong> ${result.data.date}</p>
-                <p><strong>lesson Details:</strong> ${result.data.lessonDetail}</p>
-
-            `;
-
-            submissionsDiv.appendChild(newSubmission);
-
-            // Clear form
-            form.reset();
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            document.getElementById('responseMessage').textContent = 'Error submitting form.';
-        }
-    });
-</script>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Lesson Plan</title>
-</head>
 <body>
   <h1>Welcome, <span id="username">User</span></h1>
   <h2>Your Lesson Plan</h2>
@@ -160,50 +100,16 @@
       <!-- Lesson plan data will go here -->
     </tbody>
   </table>
-
-  <script>
-    // Assuming the username is passed from the server, you can dynamically insert it
-    const username = "someUsername"; // Replace with actual user data, or from session
-
-    // Fetch the user's lesson plan data from the backend
-    fetch(`/views/resourceStorage?username=${username}`, { //error is HERE
-      method: 'GET',
-      credentials: 'include'  // If you are using cookies for authentication
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Accessing the lesson data
-        const lessonPlanTable = document.getElementById('lesson-plan-table').getElementsByTagName('tbody')[0];
-
-        data.lessonName.forEach((lesson, index) => {
-          const row = lessonPlanTable.insertRow();
-          
-          const cell1 = row.insertCell(0);
-          const cell2 = row.insertCell(1);
-          const cell3 = row.insertCell(2);
-
-          // Insert the lesson data into the table cells
-          cell1.textContent = lesson;
-          cell2.textContent = new Date(data.lessonDate[index]).toLocaleDateString();
-          cell3.textContent = data.lessonDetails[index];
-        });
-      })
-      .catch(error => console.error('Error fetching lesson plan:', error));
-  </script>
-</body>
-
-
-
-
-<form id="lesson-form">
-  <label for="lesson-name">Lesson Name:</label>
-  <input type="text" id="lesson-name" required><br>
+<!-- 
+<form id="lessonForm">
+  <label for="lessonName">Lesson Name:</label>
+  <input type="text" id="lessonName" required><br>
   
-  <label for="lesson-date">Lesson Date:</label>
-  <input type="date" id="lesson-date" required><br>
+  <label for="lessonDate">Lesson Date:</label>
+  <input type="date" id="lessonDate" required><br>
   
-  <label for="lesson-details">Lesson Details:</label>
-  <textarea id="lesson-details" required></textarea><br>
+  <label for="lessonDetails">Lesson Details:</label>
+  <textarea id="lessonDetails" required></textarea><br>
 
   <button type="submit">Add Lesson</button>
 </form>
@@ -211,12 +117,12 @@
 <script>
 
 
-  form.addEventListener('submit', function(event) {
+lessonForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const lessonName = document.getElementById('lesson-name').value;
-    const lessonDate = new Date(document.getElementById('lesson-date').value).getTime();
-    const lessonDetails = document.getElementById('lesson-details').value;
+    const lessonName = document.getElementById('lessonName').value;
+    const lessonDate = document.getElementById('lessonDate').value;
+    const lessonDetails = document.getElementById('lessonDetails').value;
 
     // Send POST request to add the lesson plan
     fetch('/addLessonPlan', {
@@ -224,8 +130,7 @@
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        username: 'someUsername',  // Replace with actual username or get it from session
+      body: JSON.stringify({ // Replace with actual username or get it from session
         lessonName: lessonName,
         lessonDate: lessonDate,
         lessonDetails: lessonDetails
@@ -235,6 +140,52 @@
     .then(data => {
       alert('Lesson added successfully');
       // Optionally, you could also update the table here without a page reload
+    })
+    .catch(error => console.error('Error adding lesson:', error));
+  });
+</script>
+
+<form id="lessonForm">
+  <label for="lessonName">Lesson Name:</label>
+  <input type="text" id="lessonName" required><br>
+
+  <label for="lessonDate">Lesson Date:</label>
+  <input type="date" id="lessonDate" required><br>
+
+  <label for="lessonDetails">Lesson Details:</label>
+  <textarea id="lessonDetails" required></textarea><br>
+
+  <button type="submit">Add Lesson</button>
+</form>
+
+<script> -->
+  <script>
+  // Get username from the session or input (make sure to replace this with actual data)
+  const username = request.session.username; //NOT WORKING
+
+  document.getElementById('lessonForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const lessonName = document.getElementById('lessonName').value;
+    const lessonDate = document.getElementById('lessonDate').value;
+    const lessonDetails = document.getElementById('lessonDetails').value;
+
+    // Send POST request to add the lesson plan
+    fetch('/addLessonPlan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        lessonName: lessonName,
+        lessonDate: lessonDate,  // Send the date string directly
+        lessonDetails: lessonDetails,
+        username: username       // Include the username
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      alert('Lesson added successfully');
     })
     .catch(error => console.error('Error adding lesson:', error));
   });

@@ -124,7 +124,7 @@ app.get('/logOut', (request,response)=>{
     response.sendFile(path.join(__dirname, '/vienws', 'logOut.html'))
 })
 
-app.post('/logOut', (request,response)=>{
+app.post('/', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'login.html'))
     guest.session.destroy()
 })
@@ -164,28 +164,95 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
     response.sendFile(path.join (__dirname, '/views', 'toDo.html') )
 })
 
-//form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
-app.get('/views/resourceStorage', async (req, res) => {
-    const username = req.query.username;
+
+
+
+
+// //form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
+// // app.get('/addLessonPlan', async (req, res) => {
+
+// //       try {
+// //       const user = await userData.findOne({ username: username });
+// //       console.log({username})
   
+// //       if (!user) {
+// //         return res.status(404).json({ message: 'User not found' });
+// //       }
+  
+// //       res.status(200).json({
+// //         lessonName: user.userLessonPlan.lessonName,
+// //         lessonDate: user.userLessonPlan.lessonDate,
+// //         lessonDetails: user.userLessonPlan.lessonDetails
+// //       });
+// //     } catch (err) {
+// //       console.error('Error retrieving lesson plan:', err);
+// //       res.status(500).json({ message: 'Error retrieving lesson plan data' });
+// //     }
+//   });
+
+
+//   app.post('/addLessonPlan', async (req, res) => {
+//     const { lessonName, lessonDate, lessonDetails, username } = req.body;
+//     // Check if username exists in the session
+   
+//     try {
+//       // Call the 'addNewPlan' function and pass the necessary parameters
+//       await addNewPlan(username, lessonName, lessonDate, lessonDetails);
+//       res.json({ message: 'Lesson plan added successfully' });
+//     } catch (err) {
+//       res.status(500).json({ error: 'Failed to add lesson plan' });
+//     }
+//   });
+
+
+
+async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
     try {
-      const user = await userData.findOne({ username: username });
+      // Check if username exists in the database
+      const user = await User.findOne({ username: username });
   
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        throw new Error('User not found');
       }
   
-      res.status(200).json({
-        lessonName: user.userLessonPlan.lessonName,
-        lessonDate: user.userLessonPlan.lessonDate,
-        lessonDetails: user.userLessonPlan.lessonDetails
-      });
+      // Update the user's document and push a new lesson plan
+      await User.findOneAndUpdate(
+        { username: username },
+        {
+          $push: {
+            lessonPlans: {   // Assuming 'lessonPlans' is an array in your User schema
+              lessonName: lessonName,
+              lessonDate: new Date(lessonDate),
+              lessonDetails: lessonDetails
+            }
+          }
+        },
+        { new: true } // Return the updated document
+      );
+  
+      console.log('Lesson plan added successfully');
     } catch (err) {
-      console.error('Error retrieving lesson plan:', err);
-      res.status(500).json({ message: 'Error retrieving lesson plan data' });
+      console.error("Error: " + err);
+      throw err;
+    }
+  }
+
+  app.post('/addLessonPlan', async (req, res) => {
+    const { lessonName, lessonDate, lessonDetails, username } = req.body;
+  
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+  
+    try {
+      // Call the 'addNewPlan' function and pass the necessary parameters
+      await addNewPlan(username, lessonName, lessonDate, lessonDetails);
+      res.json({ message: 'Lesson plan added successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to add lesson plan' });
     }
   });
-
 
 //google calender
 
@@ -193,7 +260,7 @@ app.get('/views/resourceStorage', async (req, res) => {
 //   })
 
 //   app
-// // const postData=require('/models/lessonPlan.js')
+// /const postData=require('/models/lessonPlan.js')
 const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,        // Loaded from the .env file
     process.env.SECRET_ID,    // Loaded from the .env file
@@ -201,7 +268,7 @@ const oauth2Client = new google.auth.OAuth2(
   );
   
   // Redirect user to Google for authentication
-  app.get('/', (req, res) => {
+  app.get('/toGoogle', (req, res) => {
     const url = oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: 'https://www.googleapis.com/auth/calendar.readonly',

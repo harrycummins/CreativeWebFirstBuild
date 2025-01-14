@@ -62,24 +62,31 @@ async function addNewUser(givenUser,givenPassword){ //add new user
     }
 }
 
-   async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
+  
+// Function to add a new lesson plan to the user document
+async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
   try {
-    // Update the user's lesson plan by pushing the new lesson data into the arrays
-    await User.findOneAndUpdate(
-      { username: username }, // Find the user by username
+    // Find the user by username and push the new lesson details into the arrays
+    const user = await User.findOneAndUpdate(
+      { username: username },
       {
         $push: {
-          lessonName: lessonName,
-          lessonDate: lessonDate,
-          lessonDetails: lessonDetails
+          'userLessonPlan.lessonName': lessonName,
+          'userLessonPlan.lessonDate': lessonDate,
+          'userLessonPlan.lessonDetails': lessonDetails,
         }
       },
       { new: true } // Return the updated document
     );
 
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     console.log('Lesson plan added successfully');
   } catch (err) {
-    console.error("Error: " + err);
+    console.error("Error adding lesson plan: ", err);
+    throw err;
   }
 }
 
