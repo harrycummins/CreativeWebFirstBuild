@@ -93,6 +93,9 @@ app.post('/register',async (request,response)=>{ //recieving the data when user 
     }
 })
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/home.html');  // Assuming the landing page is in 'public/index.html'
+});
 
 app.get('/login', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'login.html'))
@@ -165,95 +168,96 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
 })
 
 
-
+app.get('/getUsername', (req, res) => {
+  const username = 'test';  // Replace with actual username logic (from session, DB, etc.)
+  res.json({ username: username });
+});
 
 
 // //form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
-// // app.get('/addLessonPlan', async (req, res) => {
-
-// //       try {
-// //       const user = await userData.findOne({ username: username });
-// //       console.log({username})
+app.get('/addLessonPlan', async (req, res) => {
+  const username=req.session.username
+      try {
+     const user = await userData.findOne({ username: username });
+       console.log({username})
   
-// //       if (!user) {
-// //         return res.status(404).json({ message: 'User not found' });
-// //       }
-  
-// //       res.status(200).json({
-// //         lessonName: user.userLessonPlan.lessonName,
-// //         lessonDate: user.userLessonPlan.lessonDate,
-// //         lessonDetails: user.userLessonPlan.lessonDetails
-// //       });
-// //     } catch (err) {
-// //       console.error('Error retrieving lesson plan:', err);
-// //       res.status(500).json({ message: 'Error retrieving lesson plan data' });
-// //     }
-//   });
-
-
-//   app.post('/addLessonPlan', async (req, res) => {
-//     const { lessonName, lessonDate, lessonDetails, username } = req.body;
-//     // Check if username exists in the session
-   
-//     try {
-//       // Call the 'addNewPlan' function and pass the necessary parameters
-//       await addNewPlan(username, lessonName, lessonDate, lessonDetails);
-//       res.json({ message: 'Lesson plan added successfully' });
-//     } catch (err) {
-//       res.status(500).json({ error: 'Failed to add lesson plan' });
-//     }
-//   });
-
-
-
-async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
-    try {
-      // Check if username exists in the database
-      const user = await User.findOne({ username: username });
-  
-      if (!user) {
-        throw new Error('User not found');
+       if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
   
-      // Update the user's document and push a new lesson plan
-      await User.findOneAndUpdate(
-        { username: username },
-        {
-          $push: {
-            lessonPlans: {   // Assuming 'lessonPlans' is an array in your User schema
-              lessonName: lessonName,
-              lessonDate: new Date(lessonDate),
-              lessonDetails: lessonDetails
-            }
-          }
-        },
-        { new: true } // Return the updated document
-      );
-  
-      console.log('Lesson plan added successfully');
+   res.status(200).json({
+       lessonName: user.userLessonPlan.lessonName,
+        lessonDate: user.userLessonPlan.lessonDate,
+        lessonDetails: user.userLessonPlan.lessonDetails
+      });
     } catch (err) {
-      console.error("Error: " + err);
-      throw err;
-    }
+      console.error('Error retrieving lesson plan:', err);
+     res.status(500).json({ message: 'Error retrieving lesson plan data' });
+         }
+   });
+
+app.post('/addLessonPlan', async (req, res) => {
+  const { lessonName, lessonDate, lessonDetails } = req.body;
+  const username=req.session.username
+  // Validate that all fields are present
+  if ( !lessonName || !lessonDate || !lessonDetails) {
+    return res.status(400).json({ error: 'All fields (username, lessonName, lessonDate, lessonDetails) are required' });
   }
 
-  app.post('/addLessonPlan', async (req, res) => {
-    const { lessonName, lessonDate, lessonDetails, username } = req.body;
-  
-    if (!username) {
-      return res.status(400).json({ error: 'Username is required' });
-    }
-  
-    try {
-      // Call the 'addNewPlan' function and pass the necessary parameters
-      await addNewPlan(username, lessonName, lessonDate, lessonDetails);
-      res.json({ message: 'Lesson plan added successfully' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Failed to add lesson plan' });
-    }
-  });
+  try {
+    console.log(">>"+req.session.username)
 
+    // Call the function to add the new lesson plan
+    await userData.addNewPlan(username, lessonName, lessonDate, lessonDetails);
+    res.json({ message: 'Lesson plan added successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add lesson plan' });
+  }
+});
+
+app.get('/getLessonPlans', async (req, res) => {
+  const username = req.session.username; // Getting the username from session
+
+  if (!username) {
+    return res.status(400).json({ message: 'User not logged in' });
+  }
+
+  try {
+    // Find the user in the database by their username
+    const user = await userData.findOne({ username: username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Send back the user's lesson plan data
+    res.status(200).json({
+      lessonName: user.userLessonPlan.lessonName,
+      lessonDate: user.userLessonPlan.lessonDate,
+      lessonDetails: user.userLessonPlan.lessonDetails
+    });
+  } catch (err) {
+    console.error('Error retrieving lesson plan data:', err);  // Log the error
+    res.status(500).json({ message: 'Error retrieving lesson plan data' });
+  }
+});
+
+// app.get('/getLessonPlans', async (req, res) => {
+//   try {
+//     const lessonData = await userData.getLessonData(5);  // Assuming this method exists
+//     res.json({ users: lessonData });
+//   } catch (error) {
+//     console.error('Error fetching lesson data:', error);
+//     res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// });
+// app.post('/newLessonPost',(request, response)=>{
+//   console.log(request.body)
+//   const username=req.session.username
+//   getLessonData.addNewPost(request.session.username, request.body.lessonDate, request.body.lessonName)
+//   response.sendFile(path.join(__dirname, './views','resourceStorage.html'))
+// })
 //google calender
 
 // )

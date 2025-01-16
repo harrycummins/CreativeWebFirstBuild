@@ -75,7 +75,7 @@
 <nav id="sidebar" class="collapse sidebar bg-dark text-white p-3 d-md-block"> -->
     ...
   <!-- </nav> -->
-    
+  <span id="username"></span>
    
 </form>
 
@@ -86,64 +86,12 @@
 </div>
 
 <body>
-  <h1>Welcome, <span id="username">User</span></h1>
-  <h2>Your Lesson Plan</h2>
-  <table id="lesson-plan-table">
-    <thead>
-      <tr>
-        <th>Lesson Name</th>
-        <th>Lesson Date</th>
-        <th>Lesson Details</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Lesson plan data will go here -->
-    </tbody>
-  </table>
-<!-- 
-<form id="lessonForm">
-  <label for="lessonName">Lesson Name:</label>
-  <input type="text" id="lessonName" required><br>
-  
-  <label for="lessonDate">Lesson Date:</label>
-  <input type="date" id="lessonDate" required><br>
-  
-  <label for="lessonDetails">Lesson Details:</label>
-  <textarea id="lessonDetails" required></textarea><br>
+  <div id="lessonPlans">
+    <h2>Your Lesson Plans</h2>
+    <!-- Dynamic lesson plans will be inserted here -->
+    <ul id="lessonList"></ul>
+  </div>
 
-  <button type="submit">Add Lesson</button>
-</form>
-
-<script>
-
-
-lessonForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const lessonName = document.getElementById('lessonName').value;
-    const lessonDate = document.getElementById('lessonDate').value;
-    const lessonDetails = document.getElementById('lessonDetails').value;
-
-    // Send POST request to add the lesson plan
-    fetch('/addLessonPlan', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ // Replace with actual username or get it from session
-        lessonName: lessonName,
-        lessonDate: lessonDate,
-        lessonDetails: lessonDetails
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert('Lesson added successfully');
-      // Optionally, you could also update the table here without a page reload
-    })
-    .catch(error => console.error('Error adding lesson:', error));
-  });
-</script>
 
 <form id="lessonForm">
   <label for="lessonName">Lesson Name:</label>
@@ -158,10 +106,16 @@ lessonForm.addEventListener('submit', function(event) {
   <button type="submit">Add Lesson</button>
 </form>
 
-<script> -->
+
+  <!-- Dynamic lesson plans will be inserted here -->
+  
+  <h4>Recent posts</h4>
+    <ul id="getLessonData"></ul>
+
   <script>
+
   // Get username from the session or input (make sure to replace this with actual data)
-  const username = request.session.username; //NOT WORKING
+  //const username = 'username'; //NOT WORKING
 
   document.getElementById('lessonForm').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -174,13 +128,13 @@ lessonForm.addEventListener('submit', function(event) {
     fetch('/addLessonPlan', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-      },
+            'Content-Type': 'application/json',
+        },
       body: JSON.stringify({
         lessonName: lessonName,
         lessonDate: lessonDate,  // Send the date string directly
         lessonDetails: lessonDetails,
-        username: username       // Include the username
+        // username: username       // Include the username
       })
     })
     .then(response => response.json())
@@ -189,6 +143,50 @@ lessonForm.addEventListener('submit', function(event) {
     })
     .catch(error => console.error('Error adding lesson:', error));
   });
+
+  const recentPlan=document.getElementById('getLessonData')
+
+
+  
+fetch('/data')
+    .then(response=>response.json())
+    .then(processData)
+
+function processData(data){
+    console.log(data)
+    recentPlan.innerHTML=""
+    data.posts.forEach(post=>{
+        let li=document.createElement('li')
+        li.innerText=`${post.lessonName} by user: ${post.lessonDate}`
+        recentPlan.appendChild(li)
+    })
+}
+
+
+
+//add the lesson plans
+  // function displayLessonPlans() {
+  //   fetch(`/addLessonPlan?username=${"test"}`, { method: 'GET' })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       const lessonList = document.getElementById('lessonList');
+  //       lessonList.innerHTML = ''; // Clear any existing lessons
+
+  //       // Loop through the lesson plans and display them
+  //       data.lessonName.forEach((lessonName, index) => {
+  //         const listItem = document.createElement('li');
+  //         listItem.innerHTML = `
+  //           <strong>${lessonName}</strong> (Date: ${new Date(data.lessonDate[index]).toLocaleDateString()})
+  //           <p>${data.lessonDetails[index]}</p>
+  //         `;
+  //         lessonList.appendChild(listItem);
+  //       });
+  //     })
+  //     .catch(error => console.error('Error retrieving lesson plans:', error));
+  // }
+
+  // // Fetch and display existing lesson plans when the page loads
+  // window.onload = displayLessonPlans;
 </script>
 
 

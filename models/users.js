@@ -20,7 +20,7 @@ const userScheme =  new Schema ({
     password: String,
     userLessonPlan: {
         lessonName:[String],
-        lessonDate:[Number],
+        lessonDate:[String],
         lessonDetails:[String],
     }
 
@@ -67,7 +67,7 @@ async function addNewUser(givenUser,givenPassword){ //add new user
 async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
   try {
     // Find the user by username and push the new lesson details into the arrays
-    const user = await User.findOneAndUpdate(
+    const user = await userData.findOneAndUpdate(
       { username: username },
       {
         $push: {
@@ -90,6 +90,20 @@ async function addNewPlan(username, lessonName, lessonDate, lessonDetails) {
   }
 }
 
+async function getLessonData(n=5){
+  // return postData.slice(-n)
+  let data=[]
+  await postData.find({})
+      .sort({time: -1})
+      .limit(n)
+      .exec()
+      .then(mongoData=>{
+          console.log(mongoData)
+          data=mongoData
+      })
+  return data
+}
+
     
 
 
@@ -103,4 +117,5 @@ module.exports = { //exports all fucntions into index.js
     checkPassword,
     addNewUser,
     addNewPlan,
+    getLessonData,
 };
