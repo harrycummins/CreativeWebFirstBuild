@@ -1,0 +1,8 @@
+My app is hosted within glitch. The reason for this is because it is very simple and quilessck to set up aswell as being free to use. One problem i had to overcome when using clitch was the env secrets kept disappearing due to the connection disappearing constanlty. After allowing time and starting up a new tab the issue resolved itself.
+
+My Plan: 
+1. Make the lesson plan display the infomation from the database
+2. Intergrate the random room generator with web sockets to create a one on one chat 
+3. Attempt to intergrate the google api again, (implimented but commented out)
+4. Style the website with bootstrap
+5. User testing to make the user experience perfeect
