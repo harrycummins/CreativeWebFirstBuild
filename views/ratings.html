@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<h2>Search Teacher</h2>
+<input type="text" id="teacherSearchInput" placeholder="Enter teacher's username">
+<button id="searchTeacherButton">Search</button>
+
+<!-- Display Teacher's Lesson Plans -->
+<h3>Lesson Plans</h3>
+<ul id="lessonPlanList"></ul>
+<!-- Search Teacher -->
+<h2>Search Teacher</h2>
+<input type="text" id="teacherSearchInput" placeholder="Enter teacher's username">
+<button id="searchTeacherButton">Search</button>
+
+<!-- Display Teacher's Lesson Plans -->
+<h3>Lesson Plans</h3>
+<ul id="lessonPlanList"></ul>
+
+<script>
+ async function searchTeacher() {
+  const username = document.getElementById('teacherSearchInput').value;
+
+  if (!username) {
+    alert('Please enter a teacher\'s username');
+    return;
+  }
+
+  try {
+    // Use the username value from the input field to call the endpoint
+    const response = await fetch(`/ratingsPlan`);
+    const data = await response.json();
+
+    if (data.lessonName && data.lessonDate && data.lessonDetails) {
+      const lessonPlanList = document.getElementById('lessonPlanList');
+      lessonPlanList.innerHTML = ''; // Clear previous results
+
+      // show lesson plans
+      for (let i = 0; i < data.lessonName.length; i++) {
+        const listItem = document.createElement('li');
+
+        // Create the HTML structure 
+        listItem.innerHTML = `
+          <strong>${data.lessonName[i]}</strong><br>
+          Date: ${data.lessonDate[i]}<br>
+          Details: ${data.lessonDetails[i]}<br>
+
+          <!-- Rating System -->
+          <label for="rating-${i}">Rate this lesson (1-5): </label>
+          <input type="number" id="rating-${i}" name="rating" min="1" max="5" value="${data.lessonRatings[i] || ''}">
+          <button onclick="submitRating('${username}', ${i})">Submit Rating</button>
+          <hr>
+        `;
+
+        lessonPlanList.appendChild(listItem);
+      }
+    } else {
+      document.getElementById('lessonPlanList').innerHTML = '<li>No lesson plans found for this teacher.</li>';
+    }
+  } catch (error) {
+    console.error('Error fetching lesson plans:', error);
+    document.getElementById('lessonPlanList').innerHTML = '<li>Error loading lesson plans.</li>';
+  }
+}
+
+document.getElementById('searchTeacherButton').addEventListener('click', searchTeacher);
+</script>
+
+
+</html>
+

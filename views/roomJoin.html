@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Room Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@2.3.0/dist/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body class="d-flex align-items-center">
+    <a href="/back">back</a>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="row w-100 justify-content-center">
+            <div class="col-md-5">
+                <div class="room-key" id="roomKey"><h2>No room created</h2></div>
+                <button class="btn btn-primary" id="createRoom" onclick="createRoom()">Click to make room</button> <!-- When clicked starts the backend code -->
+    
+                <div>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your name"> <!-- Username is stored -->
+                    <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key"> <!-- Room key entered to be checked -->
+                    
+                    <div class="col">
+                        <button onclick="joinRoom()" class="btn btn-primary">Join Room</button>
+                    </div>
+                </div>
+                <div id="roomDetails"></div>
+            </div>
+        </div>
+    </div>
+    <body>
+        <h1>Create or Join a Room</h1>
+    
+        <button onclick="createRoom()">Create Room</button>
+        <div id="roomKey"></div>
+    
+        <h2>Join Room</h2>
+        <input type="text" id="username" placeholder="Enter your username" />
+        <input type="text" id="joinKey" placeholder="Enter room key" />
+        <button onclick="joinRoom()">Join Room</button>
+    
+        <div id="roomDetails"></div>
+    
+        <h2>Chat Room</h2>
+        <div id="chatBox"></div>
+        <input type="text" id="messageInput" placeholder="Type your message" />
+        <button onclick="sendMessage()">Send Message</button>
+ 
+
+    <script>
+        
+      //code below is my own work
+
+        async function createRoom() { //function to recive room key from backend and then create the room within the front end 
+            try {
+                const response = await fetch(`/create-room`, { method: 'POST' }); //create room is taken from backend in raw data
+                const data = await response.json();
+                console.log('received key', data.roomKey)
+                document.getElementById('roomKey').textContent = `Room Key: ${data.roomkey}`; //display the room key to the user who made the room
+            } catch (error) {
+                console.error('Error creating room:', error);
+            }
+        }
+
+        async function joinRoom() { //takes the data from both room key and the user name
+            const username = document.getElementById('username').value;
+            const roomKey = document.getElementById('joinKey').value;
+            
+
+            if (!username || !roomKey) { //check if both are empty 
+                alert("Please enter username and room key");
+                return;
+            }
+
+            try { //make post request to backend to get /join-room data
+                const response = await fetch(`/join-room`, {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" }, //choose the given rquest headers
+                    body: JSON.stringify({ username, roomKey }) // Send the username and roomKey as JSON in the request 
+                });
+
+                if (response.ok) { //if code is correct run following
+                    const data = await response.json(); //parse data as json 
+                    document.getElementById('roomDetails').textContent = `Users in room: ${data.users.join(', ')}`; //display a list of users within the room
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message); //if response is not successful parse the error message from the server
+                }
+            } catch (error) {
+                console.error("Error joining the room:", error);
+            }
+        }
+
+        
+    </script>
+
+ 
+</body>
+</html>

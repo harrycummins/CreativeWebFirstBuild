@@ -6,10 +6,58 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 const { google } = require('googleapis');
+const { OpenAI } = require('openai');
+const io = require('socket.io')
+const WebSocket = require('ws')
 
+
+ 
 app.listen(PORT, ()=>{
-    console.log('listening on port' + PORT)
+  console.log('listening on port for HTTP',PORT)
 })
+
+const wss = new WebSocket.Server({ port: 8011 }, () => {
+  console.log('Listening on port for WS', 8011);
+});
+
+app.use(express.static('public')) 
+
+//   connection is received
+wss.on('connection', ws => {
+  console.log((new Date()) + " Connection opened");
+
+  ws.send(JSON.stringify('Server says Hi!'));
+
+  
+  ws.on('message', message => {
+    console.log('Received message:', message);
+
+    let msg = JSON.parse(message);
+    
+
+    if (msg.message && msg.message.trim()) {
+      let msgJ = JSON.stringify(msg);  
+      console.log('Broadcasting message:', msgJ);
+
+      // Send the message to other client
+      wss.clients.forEach(client => {
+      
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(msgJ);
+        }
+      });
+    }
+  });
+
+  ws.on('close', function (reasonCode, description) {
+    console.log((new Date()) + ' Client disconnected.');
+  });
+});
+
+
+
+
+
 
 
 
@@ -62,7 +110,7 @@ mongoose.connect(connecttionString)
 
 
 
-app.use(express.static('public')) //accsessing the public server to reach the home.html file
+//accsessing the public server to reach the home.html file
 
 app.use(express.urlencoded({extended:false})) //parsig data
 
@@ -148,8 +196,8 @@ app.get('/roomJoin', (request, response) => {
     response.sendFile(path.join(__dirname, '/testingRooms', 'roomJoin.html'))
 })
 
-app.get('/calls', checkLoggedIn, (request, response) => {
-    response.sendFile(path.join(__dirname, '/views', 'calls.html'))
+app.get('/calls',  (request, response) => {
+    response.sendFile(path.join(__dirname, '/views', 'ratings.html'))
 }) //cehck user logged in
 
 
@@ -168,10 +216,10 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
 })
 
 
-app.get('/getUsername', (req, res) => {
-  const username = 'test';  // Replace with actual username logic (from session, DB, etc.)
-  res.json({ username: username });
-});
+// app.get('/getUsername', (req, res) => {
+//   const username = 'test';  // Replace with actual username logic (from session, DB, etc.)
+//   res.json({ username: username });
+// });
 
 
 // //form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
@@ -215,7 +263,6 @@ app.post('/addLessonPlan', async (req, res) => {
     res.status(500).json({ error: 'Failed to add lesson plan' });
   }
 });
-
 app.get('/getLessonPlans', async (req, res) => {
   const username = req.session.username; // Getting the username from session
 
@@ -225,23 +272,49 @@ app.get('/getLessonPlans', async (req, res) => {
 
   try {
     // Find the user in the database by their username
-    const user = await userData.findOne({ username: username });
+    //const user = await userData.findOne({ username: username });
+    const user= await userData.checkUser(req.session.username)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Assuming 'userLessonPlan' is an array, or modify if it's just one lesson
+    const lessonPlans = user.userLessonPlan;
+    // res.json({lessonPlans:lessonPlans})
+
     // Send back the user's lesson plan data
-    res.status(200).json({
-      lessonName: user.userLessonPlan.lessonName,
-      lessonDate: user.userLessonPlan.lessonDate,
-      lessonDetails: user.userLessonPlan.lessonDetails
-    });
+    res.status(200).json(lessonPlans);
   } catch (err) {
     console.error('Error retrieving lesson plan data:', err);  // Log the error
     res.status(500).json({ message: 'Error retrieving lesson plan data' });
   }
 });
+
+app.post('/addLessonPlan', async (req, res) => { //FOR LOOP ON FRONT END TO RUN THROUGH, ITS STORED IN OBJECTS AND THEN ARRAYS WITHIN THE OBJECT
+  const { lessonName, lessonDate, lessonDetails } = req.body;
+  const username = req.session.username;
+  
+  // Validate that all fields are present
+  if (!lessonName || !lessonDate || !lessonDetails) {
+    return res.status(400).json({ error: 'All fields (lessonName, lessonDate, lessonDetails) are required' });
+  }
+
+  try {
+    
+    const updatedUser = await userData.findOneAndUpdate(
+      { username: username },
+      { $push: { userLessonPlan: { lessonName, lessonDate, lessonDetails } } },
+      { new: true } // return the updated document
+    );
+
+    res.status(200).json(updatedUser.userLessonPlan);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add lesson plan' });
+  }
+});
+
 
 // app.get('/getLessonPlans', async (req, res) => {
 //   try {
@@ -329,3 +402,107 @@ const oauth2Client = new google.auth.OAuth2(
     });
   });
   
+  //randomisier
+  
+  const rooms = {}; // MongoDB will be added when needed, is being stored localy for now
+   
+  app.post('/create-room', (req, res) => { //creates the room when button is pressed
+      const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase(); // randomises a code to include numbers, lowercase and uppercase numbers
+      console.log('room code',roomKey) 
+      rooms[roomKey] = { users: [] };
+      res.json({ roomkey:roomKey }); //return json data to the frontend
+  });
+  
+  app.post('/join-room', (req, res) => { 
+      const { roomKey, username } = req.body;
+  
+  app.get('roomKey', (req, res) => {
+      const { roomKey } = req.params; //checks to see room key matches
+  
+      if (!rooms[roomKey]) {
+          return res.json({ message: 'Room not found' }); //if not returns not found message
+      }
+      res.json({ users: rooms[roomKey].users });
+  });
+      if (!rooms[roomKey]) {
+          return res.status(404).send('Room not found');
+      }
+  
+      rooms[roomKey].users.push(username);
+      res.json({ message: 'Room joined', users: rooms[roomKey].users });
+  });
+
+ app.get('chatMessage', (req,res)=> {
+    
+ })
+
+
+ //chatbot using open AI
+ //exceeded current quota?
+ 
+
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
+
+// const completion = openai.chat.completions.create({
+//   model: "gpt-4o-mini",
+//   store: true,
+//   messages: [
+//     {"role": "user", "content": "write a haiku about ai"},
+//   ],
+// });
+
+// app.post('/chat', async (req, res) => {
+//   const { userMessage } = req.body; // Get message from the user (teacher)
+
+//   try {
+//     // Request a completion from the GPT model
+//     const response = await openai.chat.completions.create({
+//       model: 'gpt-4', // You can also use gpt-3.5-turbo or gpt-4
+//       messages: [
+//         { role: 'system', content: 'You are a helpful assistant for teachers.' },
+//         { role: 'user', content: userMessage },
+//       ],
+//     });
+
+//     // Send the response back to the client
+//     res.json({ message: response.choices[0].message.content });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Something went wrong!');
+//   }
+// });
+// Assuming you have the correct import for userData (your User model)
+
+// Route to fetch lesson plans for a specific teacher
+// Endpoint to fetch teacher's lesson plan
+app.get('/ratingsPlan/:teachersUsername', async (req, res) => {
+  try {
+    // Extract the teacher's username from the URL
+    const teachersUsername = req.params.teachersUsername;
+    
+    // Find the teacher by their username
+    const teacher = await userData.findOne({ username: teachersUsername });
+
+    // Log the teacher data (optional for debugging)
+    console.log({ teacher });
+
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Respond with the teacher's lesson plan data
+    res.json({
+      lessonName: teacher.userLessonPlan.lessonName,
+      lessonDate: teacher.userLessonPlan.lessonDate,
+      lessonDetails: teacher.userLessonPlan.lessonDetails,
+      lessonRatings: teacher.userLessonPlan.lessonRatings,
+    });
+  } catch (err) {
+    console.error('Error fetching lesson plans:', err);
+    res.status(500).json({ message: 'Error fetching lesson plans' });
+  }
+});
+

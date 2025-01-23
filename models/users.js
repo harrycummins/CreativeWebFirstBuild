@@ -22,6 +22,7 @@ const userScheme =  new Schema ({
         lessonName:[String],
         lessonDate:[String],
         lessonDetails:[String],
+        lessonRatings:[Number]
     }
 
 })
@@ -118,4 +119,5 @@ module.exports = { //exports all fucntions into index.js
     addNewUser,
     addNewPlan,
     getLessonData,
+    
 };

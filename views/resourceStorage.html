@@ -7,110 +7,111 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     </head>
 <body>
-    <style>
-        body {
-          display: flex;
-          min-height: 100vh;
-          overflow-x: hidden;
-        }
-        .sidebar {
-          min-width: 250px;
-          max-width: 250px;
-          height: 100vh;
-        }
-        .content {
-          flex-grow: 1;
-          padding: 20px;
-        }
-        .html{
-            background-color: red;
-        }
-      </style>
+  <style>
+    body {
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    .sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 200vh; /* Ensure sidebar is full height */
+        overflow-y: auto; /* Allow scrolling in sidebar if needed */
+    }
 
-      <!-- Sidebar -->
-  <nav class="sidebar bg-dark text-white d-flex flex-column p-3">
+    .content {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-x: hidden; /* Prevent horizontal overflow */
+    }
+
+    .container {
+        max-width: 100%; /* Ensure content doesn't overflow the screen width */
+    }
+
+    
+    #lessonPlans {
+        overflow-x: hidden; 
+    }
+
+    
+    .btn-primary {
+        margin-top: auto; 
+    }
+
+    
+    
+</style>
+
+<!-- Sidebar -->
+<nav class="sidebar bg-dark text-white d-flex flex-column p-3">
     <h3 class="mb-4">Resource Storage</h3>
     <ul class="nav flex-column">
-      <li class="nav-item">
-        <a href="/toDo" class="nav-link text-white">To Do List</a>
-      </li>
-      <li class="nav-item">
-        <a href="/calender" class="nav-link text-white">calender</a>
-      </li>
-      <li class="nav-item">
-        <a href="#" class="nav-link text-white">Settings</a>
-      </li>
-      <li class="nav-item">
-        <a href="/home.html" class="nav-link text-white">Back to home</a>
-      </li>
-      <button class="btn btn-primary d-md-none" data-bs-toggle="collapse" data-bs-target="#sidebar">
-        Toggle Sidebar
-      </button>
-    
+        <li class="nav-item">
+            <a href="/toDo" class="nav-link text-white">To Do List</a>
+        </li>
+        <li class="nav-item">
+            <a href="/calender" class="nav-link text-white">Calendar</a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link text-white">Settings</a>
+        </li>
+        <li class="nav-item">
+            <a href="/home.html" class="nav-link text-white">Back to Home</a>
+        </li>
     </ul>
-    
-  </nav>
-<!--   
-      <div class="container">
-        <h1>lesson Planner</h1>
-<h2>Submit Your Data</h2>
-<form id="myForm">
-<div class="row">
-    <div class="col-md-6">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
-    </div>
-    <div class="col-md-6">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br><br>
-    </div>
-     <div class="col-md-10">
-    <label for="lessonDetail" class="form-label">Lesson Details</label>
-    <input type="lessonDetail" class="form-control" id="lessonDetail">
-  </div>
-  </div>
-  <button type = "favourite">Favourite</button>
-  <button type="submit">Submit</button>
-</form>
-<nav id="sidebar" class="collapse sidebar bg-dark text-white p-3 d-md-block"> -->
-    ...
-  <!-- </nav> -->
-  <span id="username"></span>
-   
-</form>
+    <button class="btn btn-primary d-md-none" data-bs-toggle="collapse" data-bs-target="#sidebar">
+        Toggle Sidebar
+    </button>
+</nav>
 
-<h2>Submitted Data</h2>
-<div id="submissions" style="margin-top: 20px; font-family: Arial, sans-serif;"></div>
+<!-- Main content -->
+<div class="content">
+    <span id="username"></span>
 
-<p id="responseMessage" style="margin-top: 10px; color: green;"></p>
+    <div class="container mt-5">
+        <h2>Submitted Data</h2>
+        <div id="submissions" style="margin-top: 20px; font-family: Arial, sans-serif;"></div>
+
+        <p id="responseMessage" style="margin-top: 10px; color: green;"></p>
+
+        <h1>Welcome, <span id="username">Loading...</span></h1>
+
+        <!-- Lesson Form -->
+        <form id="lessonForm" class="mt-4">
+            <div class="form-group">
+                <label for="lessonName">Lesson Name:</label>
+                <input type="text" id="lessonName" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lessonDate">Lesson Date:</label>
+                <input type="date" id="lessonDate" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lessonDetails">Lesson Details:</label>
+                <textarea id="lessonDetails" class="form-control" rows="4" required></textarea>
+            </div>
+
+            <button id="loadLessonPlansButton" type="submit" class="btn btn-primary">Add Lesson</button>
+        </form>
+
+        <div id="lessonPlans" class="mt-4">
+            <div class="container">
+                <h2>Your Lesson Plans</h2>
+                <ul id="lessonPlanList" class="list-group">
+                    <!-- Lesson plans will be populated here -->
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
-<body>
-  <div id="lessonPlans">
-    <h2>Your Lesson Plans</h2>
-    <!-- Dynamic lesson plans will be inserted here -->
-    <ul id="lessonList"></ul>
-  </div>
-
-
-<form id="lessonForm">
-  <label for="lessonName">Lesson Name:</label>
-  <input type="text" id="lessonName" required><br>
-
-  <label for="lessonDate">Lesson Date:</label>
-  <input type="date" id="lessonDate" required><br>
-
-  <label for="lessonDetails">Lesson Details:</label>
-  <textarea id="lessonDetails" required></textarea><br>
-
-  <button type="submit">Add Lesson</button>
-</form>
-
-
   <!-- Dynamic lesson plans will be inserted here -->
-  
-  <h4>Recent posts</h4>
-    <ul id="getLessonData"></ul>
+
 
   <script>
 
@@ -144,49 +145,61 @@
     .catch(error => console.error('Error adding lesson:', error));
   });
 
-  const recentPlan=document.getElementById('getLessonData')
+  // const recentPlan=document.getElementById('getLessonData')
 
 
   
-fetch('/data')
-    .then(response=>response.json())
-    .then(processData)
+// fetch('/data')
+//     .then(response=>response.json())
+//     .then(processData)
 
-function processData(data){
-    console.log(data)
-    recentPlan.innerHTML=""
-    data.posts.forEach(post=>{
-        let li=document.createElement('li')
-        li.innerText=`${post.lessonName} by user: ${post.lessonDate}`
-        recentPlan.appendChild(li)
-    })
-}
+// function processData(data){
+//     console.log(data)
+//     recentPlan.innerHTML=""
+//     data.posts.forEach(post=>{
+//         let li=document.createElement('li')
+//         li.innerText=`${post.lessonName} by user: ${post.lessonDate}`
+//         recentPlan.appendChild(li)
+//     })
 
+//ADD TO GLITCH
 
+async function fetchLessonPlans() {
+            try {
+                const response = await fetch('/getLessonPlans');
+                const data = await response.json();
+                console.log("Data from backend:", data); 
 
-//add the lesson plans
-  // function displayLessonPlans() {
-  //   fetch(`/addLessonPlan?username=${"test"}`, { method: 'GET' })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       const lessonList = document.getElementById('lessonList');
-  //       lessonList.innerHTML = ''; // Clear any existing lessons
+               
+                if (data && data.lessonName && data.lessonDate && data.lessonDetails) {
+                    // Set the username (assuming username is part of the data)
+                    const usernameElement = document.getElementById('username');
+                  
+                    const lessonPlanList = document.getElementById('lessonPlanList');
+                    lessonPlanList.innerHTML = '';
 
-  //       // Loop through the lesson plans and display them
-  //       data.lessonName.forEach((lessonName, index) => {
-  //         const listItem = document.createElement('li');
-  //         listItem.innerHTML = `
-  //           <strong>${lessonName}</strong> (Date: ${new Date(data.lessonDate[index]).toLocaleDateString()})
-  //           <p>${data.lessonDetails[index]}</p>
-  //         `;
-  //         lessonList.appendChild(listItem);
-  //       });
-  //     })
-  //     .catch(error => console.error('Error retrieving lesson plans:', error));
-  // }
+                    //run through the arrays
+                    for (let i = 0; i < data.lessonName.length; i++) {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <strong>${data.lessonName[i]}</strong><br>
+                            Date: ${data.lessonDate[i]}<br>
+                            Details: ${data.lessonDetails[i]}<br><br>
+                        `;
+                        lessonPlanList.appendChild(listItem);
+                    }
+                } else {
+                    document.getElementById('lessonPlanList').innerHTML = '<li>No lesson plans found.</li>';
+                }
+            } catch (error) {
+                console.error('Error fetching lesson plans:', error);
+                document.getElementById('lessonPlanList').innerHTML = '<li>Error loading lesson plans.</li>';
+            }
+        }
 
-  // // Fetch and display existing lesson plans when the page loads
-  // window.onload = displayLessonPlans;
+        // Call the fetchLessonPlans function when the page loads
+        window.onload = fetchLessonPlans;
+        document.getElementById('loadLessonPlansButton').addEventListener('click', fetchLessonPlans);
 </script>
 
 
