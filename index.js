@@ -161,7 +161,7 @@ app.set('view engine', 'ejs')
 
 //sending the user to certein views throughout the login section
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/home.html');  // Assuming the landing page is in 'public/index.html'
+  res.sendFile(__dirname + '/public/home.html');  // /index.html'
 });
 
 app.get('/logOut', (request,response)=>{
@@ -258,7 +258,7 @@ app.get('/addLessonPlan', async (req, res) => {
 });
 
 
-const rooms = {}; // MongoDB will be added when needed, is being stored localy for now
+const rooms = {}; 
 
 // Store rooms and their users
 
