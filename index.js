@@ -1,70 +1,66 @@
 const express = require('express');
 const app = express();
-const PORT=3000
+
 const path = require('path')
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 const { google } = require('googleapis');
-const { OpenAI } = require('openai');
-const io = require('socket.io')
 const WebSocket = require('ws')
+const http = require('http');
 
-
- 
-app.listen(PORT, ()=>{
-  console.log('listening on port for HTTP',PORT)
-})
-
-const wss = new WebSocket.Server({ port: 8011 }, () => {
-  console.log('Listening on port for WS', 8011);
-});
 
 app.use(express.static('public')) 
+ // Use the same HTTP server
+//taken from ws Documentation
 
-//   connection is received
-wss.on('connection', ws => {
-  console.log((new Date()) + " Connection opened");
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server }); // Use the same HTTP server
 
-  ws.send(JSON.stringify('Server says Hi!'));
-
+const PORT = process.env.PORT || 3000;
+wss.on('connection', (ws) => {
+  console.log('A user connected');
   
-  ws.on('message', message => {
+  // Send a JSON string to the client
+  ws.send(JSON.stringify({ username: 'Server', message: 'Server says Hi!' }));
+
+  // Listen for incoming messages and broadcast 
+  ws.on('message', (message) => {
     console.log('Received message:', message);
 
-    let msg = JSON.parse(message);
-    
-
-    if (msg.message && msg.message.trim()) {
-      let msgJ = JSON.stringify(msg);  
-      console.log('Broadcasting message:', msgJ);
-
-      // Send the message to other client
-      wss.clients.forEach(client => {
+    // Ensure the message is a string 
+    let messageString = message;
+    try {
       
+      if (typeof message !== 'string') {
+        messageString = message.toString();
+      }
+      
+      // Now we ensure it's JSON format
+      const parsedMessage = JSON.parse(messageString);
+      console.log('Parsed message:', parsedMessage);
+
+      // Broadcast the parsed message to all other connected clients
+      wss.clients.forEach((client) => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(msgJ);
+          client.send(JSON.stringify(parsedMessage)); // Ensure message is stringified before sending
         }
       });
+    } catch (error) {
+      console.error('Error parsing message:', error);
     }
   });
 
-  ws.on('close', function (reasonCode, description) {
-    console.log((new Date()) + ' Client disconnected.');
+  ws.on('close', () => {
+    console.log('A user disconnected');
   });
 });
 
+// Start the server
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
-
-
-
-
-
-
-//using the daily api to create a video room
-
-//login system
-//was following the same steps used within class tutorials
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -110,13 +106,10 @@ mongoose.connect(connecttionString)
 
 
 
-//accsessing the public server to reach the home.html file
+app.use(express.static('public')) //accsessing the public server to reach the home.html file
 
 app.use(express.urlencoded({extended:false})) //parsig data
 
-// //app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, '/views', 'login.html')); // connecting to the login page when localhost is loaded
-// });
 
 app.get('/app', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'app.html'))
@@ -141,9 +134,6 @@ app.post('/register',async (request,response)=>{ //recieving the data when user 
     }
 })
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/home.html');  // Assuming the landing page is in 'public/index.html'
-});
 
 app.get('/login', (request,response)=>{
     response.sendFile(path.join(__dirname, '/views', 'login.html'))
@@ -170,6 +160,9 @@ app.post('/login', async (request, response)=>{
 app.set('view engine', 'ejs')
 
 //sending the user to certein views throughout the login section
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/home.html');  // Assuming the landing page is in 'public/index.html'
+});
 
 app.get('/logOut', (request,response)=>{
     response.sendFile(path.join(__dirname, '/vienws', 'logOut.html'))
@@ -196,12 +189,12 @@ app.get('/roomJoin', (request, response) => {
     response.sendFile(path.join(__dirname, '/testingRooms', 'roomJoin.html'))
 })
 
-app.get('/calls',  (request, response) => {
-    response.sendFile(path.join(__dirname, '/views', 'ratings.html'))
+app.get('/calls', checkLoggedIn, (request, response) => {
+    response.sendFile(path.join(__dirname, '/views', 'calls.html'))
 }) //cehck user logged in
 
 
-//teachres pages
+
 
 app.get('/resourceStorage', checkLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, '/views' ,'resourceStorage.html')); // connecting to the login page when localhost is loaded
@@ -216,15 +209,12 @@ app.get('/toDo', checkLoggedIn, (request, response)=>{
 })
 
 
-// app.get('/getUsername', (req, res) => {
-//   const username = 'test';  // Replace with actual username logic (from session, DB, etc.)
-//   res.json({ username: username });
-// });
+
 
 
 // //form to handle data from lesson planner and send back the data const userData = require('./users.js'); 
 app.get('/addLessonPlan', async (req, res) => {
-  const username=req.session.username
+
       try {
      const user = await userData.findOne({ username: username });
        console.log({username})
@@ -244,7 +234,11 @@ app.get('/addLessonPlan', async (req, res) => {
          }
    });
 
-app.post('/addLessonPlan', async (req, res) => {
+
+
+
+
+  app.post('/addLessonPlan', async (req, res) => {
   const { lessonName, lessonDate, lessonDetails } = req.body;
   const username=req.session.username
   // Validate that all fields are present
@@ -253,9 +247,8 @@ app.post('/addLessonPlan', async (req, res) => {
   }
 
   try {
-    console.log(">>"+req.session.username)
-
     // Call the function to add the new lesson plan
+     console.log(">>"+req.session.username)
     await userData.addNewPlan(username, lessonName, lessonDate, lessonDetails);
     res.json({ message: 'Lesson plan added successfully' });
   } catch (err) {
@@ -263,6 +256,43 @@ app.post('/addLessonPlan', async (req, res) => {
     res.status(500).json({ error: 'Failed to add lesson plan' });
   }
 });
+
+
+const rooms = {}; // MongoDB will be added when needed, is being stored localy for now
+
+// Store rooms and their users
+
+// Endpoint to create a room
+app.post('/create-room', (req, res) => {
+    const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase(); // Generate a room key
+    console.log('Room code:', roomKey);
+    rooms[roomKey] = { users: [] };
+    res.json({ roomKey }); // Use "roomKey" here (case-sensitive, matches frontend)
+});
+
+// Endpoint to join a room
+app.post('/join-room', (req, res) => {
+    const { roomKey, username } = req.body;
+
+    if (!rooms[roomKey]) {
+        return res.status(404).json({ message: 'Room not found' });
+    }
+
+    rooms[roomKey].users.push(username);
+    res.json({ message: 'Room joined', users: rooms[roomKey].users });
+});
+
+// Endpoint to get room details
+app.get('/room/:roomKey', (req, res) => {
+    const { roomKey } = req.params;
+
+    if (!rooms[roomKey]) {
+        return res.status(404).json({ message: 'Room not found' });
+    }
+
+    res.json({ users: rooms[roomKey].users });
+});
+
 app.get('/getLessonPlans', async (req, res) => {
   const username = req.session.username; // Getting the username from session
 
@@ -279,14 +309,14 @@ app.get('/getLessonPlans', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Assuming 'userLessonPlan' is an array, or modify if it's just one lesson
+    
     const lessonPlans = user.userLessonPlan;
     // res.json({lessonPlans:lessonPlans})
 
     // Send back the user's lesson plan data
     res.status(200).json(lessonPlans);
   } catch (err) {
-    console.error('Error retrieving lesson plan data:', err);  // Log the error
+    console.error('Error retrieving lesson plan data:', err);  
     res.status(500).json({ message: 'Error retrieving lesson plan data' });
   }
 });
@@ -314,195 +344,67 @@ app.post('/addLessonPlan', async (req, res) => { //FOR LOOP ON FRONT END TO RUN 
     res.status(500).json({ error: 'Failed to add lesson plan' });
   }
 });
+//daily api
+//daily documentation used
 
-
-// app.get('/getLessonPlans', async (req, res) => {
-//   try {
-//     const lessonData = await userData.getLessonData(5);  // Assuming this method exists
-//     res.json({ users: lessonData });
-//   } catch (error) {
-//     console.error('Error fetching lesson data:', error);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// });
-// app.post('/newLessonPost',(request, response)=>{
-//   console.log(request.body)
-//   const username=req.session.username
-//   getLessonData.addNewPost(request.session.username, request.body.lessonDate, request.body.lessonName)
-//   response.sendFile(path.join(__dirname, './views','resourceStorage.html'))
-// })
-//google calender
-
-// )
-//   })
-
-//   app
-// /const postData=require('/models/lessonPlan.js')
-const oauth2Client = new google.auth.OAuth2(
-    process.env.CLIENT_ID,        // Loaded from the .env file
-    process.env.SECRET_ID,    // Loaded from the .env file
-    process.env.REDIRECT      // Loaded from the .env file
-  );
+const createDailyRoom = async () => {
+  const DAILY_API_URL = '';
   
-  // Redirect user to Google for authentication
-  app.get('/toGoogle', (req, res) => {
-    const url = oauth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: 'https://www.googleapis.com/auth/calendar.readonly',
-    });
-    res.redirect(url);
-  });
-  
-  // Handle redirect after user grants permission
-  app.get('/redirect', (req, res) => {
-    const code = req.query.code;
-    oauth2Client.getToken(code, (err, tokens) => {
-      if (err) {
-        console.error('Cannot get token', err);
-        res.send('Error');
-        return;
-      }
-      oauth2Client.setCredentials(tokens);
-      res.send('Logged in');
-    });
-  });
-  
-  // Fetch calendar list
-  app.get('/calendars', (req, res) => {
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-    calendar.calendarList.list({}, (err, response) => {
-      if (err) {
-        console.error('Error fetching calendars', err);
-        res.end('Error!');
-        return;
-      }
-      const calendars = response.data.items;
-      res.json(calendars);
-    });
-  });
-  
-  // Fetch events from a calendar
-  app.get('/events', (req, res) => {
-    const calendarId = req.query.calendar || 'primary';
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-    calendar.events.list({
-      calendarId,
-      timeMin: (new Date()).toISOString(),
-      maxResults: 15,
-      singleEvents: true,
-      orderBy: 'startTime',
-    }, (err, response) => {
-      if (err) {
-        console.error('Error fetching events', err);
-        res.send('Error');
-        return;
-      }
-      const events = response.data.items;
-      res.json(events);
-    });
-  });
-  
-  //randomisier
-  
-  const rooms = {}; // MongoDB will be added when needed, is being stored localy for now
-   
-  app.post('/create-room', (req, res) => { //creates the room when button is pressed
-      const roomKey = Math.random().toString(36).substring(2, 8).toUpperCase(); // randomises a code to include numbers, lowercase and uppercase numbers
-      console.log('room code',roomKey) 
-      rooms[roomKey] = { users: [] };
-      res.json({ roomkey:roomKey }); //return json data to the frontend
-  });
-  
-  app.post('/join-room', (req, res) => { 
-      const { roomKey, username } = req.body;
-  
-  app.get('roomKey', (req, res) => {
-      const { roomKey } = req.params; //checks to see room key matches
-  
-      if (!rooms[roomKey]) {
-          return res.json({ message: 'Room not found' }); //if not returns not found message
-      }
-      res.json({ users: rooms[roomKey].users });
-  });
-      if (!rooms[roomKey]) {
-          return res.status(404).send('Room not found');
-      }
-  
-      rooms[roomKey].users.push(username);
-      res.json({ message: 'Room joined', users: rooms[roomKey].users });
-  });
-
- app.get('chatMessage', (req,res)=> {
-    
- })
-
-
- //chatbot using open AI
- //exceeded current quota?
- 
-
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// const completion = openai.chat.completions.create({
-//   model: "gpt-4o-mini",
-//   store: true,
-//   messages: [
-//     {"role": "user", "content": "write a haiku about ai"},
-//   ],
-// });
-
-// app.post('/chat', async (req, res) => {
-//   const { userMessage } = req.body; // Get message from the user (teacher)
-
-//   try {
-//     // Request a completion from the GPT model
-//     const response = await openai.chat.completions.create({
-//       model: 'gpt-4', // You can also use gpt-3.5-turbo or gpt-4
-//       messages: [
-//         { role: 'system', content: 'You are a helpful assistant for teachers.' },
-//         { role: 'user', content: userMessage },
-//       ],
-//     });
-
-//     // Send the response back to the client
-//     res.json({ message: response.choices[0].message.content });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Something went wrong!');
-//   }
-// });
-// Assuming you have the correct import for userData (your User model)
-
-// Route to fetch lesson plans for a specific teacher
-// Endpoint to fetch teacher's lesson plan
-app.get('/ratingsPlan/:teachersUsername', async (req, res) => {
   try {
-    // Extract the teacher's username from the URL
-    const teachersUsername = req.params.teachersUsername;
+    const response = await axios.post(
+      DAILY_API_URL,
+      {
+        name: `room-${Date.now("https://teachingapplication.daily.co/theLearningLabs")}`, // Unique room name
+        properties: {
+          enable_chat: true,
+          start_audio_off: true,
+          start_video_off: true,
+          max_participants: 10,
+          exp: Math.floor(Date.now() / 1000) + 3600, // Room expires in 1 hour
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.DAILY_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     
-    // Find the teacher by their username
-    const teacher = await userData.findOne({ username: teachersUsername });
-
-    // Log the teacher data (optional for debugging)
-    console.log({ teacher });
-
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
-
-    // Respond with the teacher's lesson plan data
-    res.json({
-      lessonName: teacher.userLessonPlan.lessonName,
-      lessonDate: teacher.userLessonPlan.lessonDate,
-      lessonDetails: teacher.userLessonPlan.lessonDetails,
-      lessonRatings: teacher.userLessonPlan.lessonRatings,
-    });
-  } catch (err) {
-    console.error('Error fetching lesson plans:', err);
-    res.status(500).json({ message: 'Error fetching lesson plans' });
+    return response.data; // Contains room URL, name, and other properties
+  } catch (error) {
+    console.error('Error creating room:', error.response.data);
+    throw error;
+  }
+};
+app.post('/api/create-room', async (req, res) => {
+  try {
+    const room = await createDailyRoom();
+    res.status(200).json(room); // Send room data to the client
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create room' });
   }
 });
 
+
+
+
+
+// Endpoint to create a new scheduled event (meeting)
+
+
+
+app.get('/getCalendlyData', (req, res) => {
+    axios({
+        method: 'get',
+        url: 'https://v1.nocodeapi.com/harrycummins/calendly/PqbwrYTLbBOAuksw',
+        params: {}
+    })
+    .then(function (response) {
+        // Send the Calendly data to the frontend
+        res.json(response.data);
+    })
+    .catch(function (error) {
+        res.status(500).json({ error: 'Failed to fetch Calendly data' });
+    });
+});
