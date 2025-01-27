@@ -1,97 +1,241 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Room Management</title>
-    <script src="https://cdn.jsdelivr.net/npm/socket.io@2.3.0/dist/socket.io.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+   
+    body {
+      background-color: #f1f8e9; /* Light greenish background */
+      font-family: 'Arial', sans-serif;
+      height: 100vh; /* Full viewport height */
+      display: flex;
+      justify-content: center; /* Center horizontally */
+      align-items: center; /* Center vertically */
+      position: relative; /* Required for absolute positioning of the button */
+    }
+
+    
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px; /* Limit max width of container */
+    }
+
+    
+    .room-key h2 {
+      color: #80cbc4; 
+    }
+
+    /* Button Styling */
+    .btn-primary {
+      background-color: #80cbc4; /* Light teal */
+      border-color: #80cbc4;
+    }
+    .btn-primary:hover {
+      background-color: #66b2a2; 
+      border-color: #66b2a2;
+    }
+
+    /* Input Fields */
+    .form-control {
+      margin-bottom: 10px;
+    }
+
+    /* Chatbox Styling */
+    #chatBox {
+      border: 1px solid #ccc;
+      height: 300px;
+      width: 100%;
+      overflow-y: scroll;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #ffffff; /* White background for chatbox */
+      border-radius: 8px;
+    }
+
+    /* Message Box */
+    #input {
+      width: 80%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #80cbc4;
+    }
+
+    #sendButton {
+      padding: 10px 20px;
+      background-color: #80cbc4;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    #sendButton:hover {
+      background-color: #66b2a2;
+    }
+
+  
+    #roomDetails {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    h2 {
+      color: #80cbc4; 
+      text-align: center;
+    }
+
+   
+    .back-to-home-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #80cbc4;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      text-decoration: none; 
+    }
+
+   
+    .back-to-home-btn:hover {
+      background-color: #66b2a2;
+      text-decoration: none; /* Keep text decoration as none */
+    }
+  </style>
 </head>
-<body class="d-flex align-items-center">
-    <a href="/back">back</a>
-    <div class="container d-flex justify-content-center align-items-center">
-        <div class="row w-100 justify-content-center">
-            <div class="col-md-5">
-                <div class="room-key" id="roomKey"><h2>No room created</h2></div>
-                <button class="btn btn-primary" id="createRoom" onclick="createRoom()">Click to make room</button> <!-- When clicked starts the backend code -->
-    
-                <div>
-                    <input type="text" id="username" class="form-control" placeholder="Enter your name"> <!-- Username is stored -->
-                    <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key"> <!-- Room key entered to be checked -->
-                    
-                    <div class="col">
-                        <button onclick="joinRoom()" class="btn btn-primary">Join Room</button>
-                    </div>
-                </div>
-                <div id="roomDetails"></div>
-            </div>
-        </div>
+<body>
+  <!-- Back to Home button -->
+  <a href="/home.html" class="back-to-home-btn">Back to Home</a>
+
+  <div class="container">
+    <div class="room-key" id="roomKey">
+      <h2>No room created</h2>
     </div>
-    <body>
-        <h1>Create or Join a Room</h1>
-    
-        <button onclick="createRoom()">Create Room</button>
-        <div id="roomKey"></div>
-    
-        <h2>Join Room</h2>
-        <input type="text" id="username" placeholder="Enter your username" />
-        <input type="text" id="joinKey" placeholder="Enter room key" />
-        <button onclick="joinRoom()">Join Room</button>
-    
-        <div id="roomDetails"></div>
-    
-        <h2>Chat Room</h2>
-        <div id="chatBox"></div>
-        <input type="text" id="messageInput" placeholder="Type your message" />
-        <button onclick="sendMessage()">Send Message</button>
- 
+    <button class="btn btn-primary" id="createRoom" onclick="createRoom()">Click to make room</button>
+    <div>
+      <input type="text" id="username" class="form-control" placeholder="Enter your name">
+      <input type="text" class="form-control" id="joinKey" placeholder="Enter your room key">
+      <button onclick="joinRoom()" class="btn btn-primary">Join Room</button>
+    </div>
+    <div id="roomDetails"></div>
 
-    <script>
-        
-      //code below is my own work
+    <h2>Type some text</h2>
+    <input id="input" type="text" placeholder="Write A Message" class="form-control">
+    <button id="sendButton">Submit!</button>
+    <div id="chatBox"></div>
+  </div>
 
-        async function createRoom() { //function to recive room key from backend and then create the room within the front end 
+  <script>
+    let connection = null; // WebSocket connection
+    let currentRoom = ''; // Store the room key
+
+    // Function to create a room
+    async function createRoom() {
+      try {
+        const response = await fetch(`/create-room`, { method: 'POST' });
+        const data = await response.json();
+        console.log('Room created with key:', data.roomKey);
+        document.getElementById('roomKey').textContent = `Room Key: ${data.roomKey}`;
+      } catch (error) {
+        console.error('Error creating room:', error);
+      }
+    }
+
+    // Function to join a room
+    async function joinRoom() {
+      const username = document.getElementById('username').value;
+      const roomKey = document.getElementById('joinKey').value;
+
+      if (!username || !roomKey) {
+        alert("Please enter both username and room key.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/join-room`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, roomKey }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Joined room successfully:', data);
+          document.getElementById('roomDetails').textContent = `Users in room: ${data.users.join(', ')}`;
+          currentRoom = roomKey;
+
+          // Open WebSocket connection after joining the room
+          connection = new WebSocket('wss://' + window.location.hostname); // Secure WebSocket
+
+          connection.onopen = function() {
+            connection.send(JSON.stringify({ action: 'join', username, roomKey })); // Send join info
+          };
+
+          // Handle incoming WebSocket messages
+          connection.onmessage = function(event) {
             try {
-                const response = await fetch(`/create-room`, { method: 'POST' }); //create room is taken from backend in raw data
-                const data = await response.json();
-                console.log('received key', data.roomKey)
-                document.getElementById('roomKey').textContent = `Room Key: ${data.roomkey}`; //display the room key to the user who made the room
+              const message = JSON.parse(event.data); // Parse the received message as JSON
+              console.log('Received message:', message); // Debug: Check received message
+
+              // Display the message in the chat box
+              const messageElement = document.createElement('div');
+              messageElement.textContent = `${message.username}: ${message.message}`;
+              document.getElementById('chatBox').appendChild(messageElement);
+
+              // Scroll to the bottom of the chat box
+              document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
             } catch (error) {
-                console.error('Error creating room:', error);
+              console.error('Error parsing message:', error);
+              console.log('Received raw data:', event.data);  // Show raw data for debugging
             }
+          };
+        } else {
+          alert('Error joining the room');
         }
+      } catch (error) {
+        console.error('Error joining room:', error);
+      }
+    }
 
-        async function joinRoom() { //takes the data from both room key and the user name
-            const username = document.getElementById('username').value;
-            const roomKey = document.getElementById('joinKey').value;
-            
+    // Function to send messages
+    function sendMessage() {
+      const message = document.getElementById('input').value.trim();
+      const username = document.getElementById('username').value;
+      const roomKey = document.getElementById('joinKey').value;
 
-            if (!username || !roomKey) { //check if both are empty 
-                alert("Please enter username and room key");
-                return;
-            }
+      if (!message) {
+        alert("Please enter a message.");
+        return;
+      }
 
-            try { //make post request to backend to get /join-room data
-                const response = await fetch(`/join-room`, {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" }, //choose the given rquest headers
-                    body: JSON.stringify({ username, roomKey }) // Send the username and roomKey as JSON in the request 
-                });
-
-                if (response.ok) { //if code is correct run following
-                    const data = await response.json(); //parse data as json 
-                    document.getElementById('roomDetails').textContent = `Users in room: ${data.users.join(', ')}`; //display a list of users within the room
-                } else {
-                    const errorData = await response.json();
-                    alert(errorData.message); //if response is not successful parse the error message from the server
-                }
-            } catch (error) {
-                console.error("Error joining the room:", error);
-            }
-        }
-
+      if (connection && connection.readyState === WebSocket.OPEN) {
+        // Send the message along with the username and roomKey
+        const messageData = {
+          username: username,
+          message: message,
+          roomKey: roomKey,
+          action: 'message'
+        };
         
-    </script>
+        connection.send(JSON.stringify(messageData));  // Send to WebSocket server
+        document.getElementById('input').value = ''; // Clear input field
+      } else {
+        console.error('WebSocket connection is not open.');
+      }
+    }
 
- 
+    // Send message when button is clicked
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+  </script>
 </body>
 </html>

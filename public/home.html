@@ -1,236 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <title>title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel = "/css/main.min.css" href="style.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  
     <style>
-      .custom-badge {
-        background-color: #58295a; /* Tomato red */
-        color: white;
-      
-        
-      }
+        body {
+            background-color: #e9f7f5;
+            font-family: 'Roboto', sans-serif;
+            padding-top: 80px;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #00796b; 
+        }
+
+        .navbar .navbar-brand {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .navbar .navbar-nav .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar .navbar-nav .nav-link:hover {
+            color: #ffcc80 !important; /* Light peach hover color */
+        }
+
+        /* Header Section */
+        .header {
+            background-color: #80cbc4; /* Light teal */
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            border-bottom: 10px solid #00796b; /* Remove the blue color */
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            font-size: 1.5rem;
+        }
+
+        .btn-primary {
+            background-color: #0288d1; /* Light blue button */
+            border-color: #0288d1;
+        }
+
+        .btn-primary:hover {
+            background-color: #0277bd;
+            border-color: #0277bd;
+        }
+
+        /* Section Styling */
+        .section-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .section-content {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .feature-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .footer {
+            background-color: #00796b; /* Keep the teal color */
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .blockquote {
+            font-size: 1.2rem;
+            color: #333;
+            border-left: 5px solid #00796b;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            background-color: #f1f8e9;
+        }
     </style>
-  
 </head>
+
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">The Learning Lab</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/calls">Calls</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/roomJoin">Chat Room</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resourceStorage">Teachers Rooms</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Log in</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="header">
+        <h1>The Learning Lab</h1>
+        <p>Your all-in-one resource for teaching and learning</p>
+              <a href="/calls" class="btn btn-primary btn-lg">Join Now!</a>
+    </div>
+
     
-  <!-- Internal CSS -->
-  <style>
-    body {
-      background-color: #e9f7f5; /* Light teal background for a calm learning environment */
-      font-family: 'Arial', sans-serif;
-    }
-
-    /* Navbar Styling */
-    .navbar {
-      background-color: #00796b; /* Teal for a professional and calming tone */
-    }
-
-    .navbar .navbar-brand {
-      font-weight: bold;
-      color: #ffffff;
-    }
-
-    .navbar .navbar-nav .nav-link {
-      color: #ffffff !important;
-    }
-
-    .navbar .navbar-nav .nav-link:hover {
-      color: #ffcc80 !important; /* Light peach hover color */
-    }
-
-    /* Main Section Styling */
-    .header {
-      background-color: #80cbc4; /* Light teal */
-      padding: 40px 0;
-      text-align: center;
-      color: white;
-    }
-
-    .header h1 {
-      font-size: 2.5rem;
-    }
-
-    .header p {
-      font-size: 1.2rem;
-    }
-
-    /* Custom Badge Styling */
-    .custom-badge {
-      background-color: #0288d1; /* Blue for professionalism */
-      color: white;
-    }
-
-    .badge-container {
-      margin-top: 20px;
-    }
-
-    .badge {
-      margin: 10px 0;
-    }
-
-    /* Section Title Styling */
-    .section-title {
-      font-size: 2rem;
-      color: #333;
-      margin-bottom: 30px;
-    }
-
-    .section-content {
-      font-size: 1.1rem;
-      color: #555;
-    }
-
-    .blockquote {
-      font-size: 1.1rem;
-      color: #333;
-      border-left: 5px solid #0288d1;
-      padding-left: 20px;
-      margin-bottom: 30px;
-      background-color: #f1f8e9; /* Light greenish background for quotes */
-    }
-
-    .footer {
-      background-color: #00796b; /* Teal background */
-      color: white;
-      padding: 20px 0;
-    }
-
-    /* Image Section */
-    .img-fluid {
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-    }
-
-    /* Container Styling */
-    .container-custom {
-      background-color: white;
-      padding: 40px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-    }
-
-    /* Spacing */
-    .mt-5 {
-      margin-top: 50px;
-    }
-
-    .mx-3 {
-      margin-left: 15px;
-      margin-right: 15px;
-    }
-
-    .p-3 {
-      padding: 20px;
-    }
-
-    .col-sm-4 {
-      padding: 20px;
-    }
-
-    .col-sm-8 {
-      padding: 20px;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-      <a class="navbar-brand" href="#">Teaching Platform</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" href="/calls">Calls</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/roomJoin">Testing Rooms</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/resourceStorage">Teaching Rooms</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/login">Log in</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main Content -->
-  <div class="header">
-    <h1>Welcome to the Online Teaching Platform</h1>
-    <p>Your all-in-one resource for teaching and learning</p>
-  </div>
-
-  <!-- Connect and Plan Section -->
-  <div class="container mt-5">
-    <div class="container-custom">
-      <div class="row">
-        <div class="col-md-6">
-          <h2 class="section-title">Connect and Plan with Ease</h2>
-          <p class="section-content">Our platform allows teachers and students to connect, collaborate, and plan lessons effortlessly. Make learning easier with all the tools you need in one place.</p>
-          <p class="section-content text-info">An essential tool for every educator.</p>
+    <div class="container mt-5">
+        <div class="row">
+           
+           <div class="col-md-6">
+    <h2 class="section-title display-4" style="font-size: 2.5rem; font-weight: bold; color: #00796b;">Connect and Plan with Ease</h2>
+    <p class="section-content" style="font-size: 1.2rem; line-height: 1.8; color: #333; padding-bottom: 20px;">Our platform allows teachers and students to connect, collaborate, and plan lessons effortlessly. Make learning easier with all the tools you need in one place.</p>
+    <p class="section-content text-info" style="font-size: 1.3rem; font-weight: 600;">An essential tool for every educator.</p>
+</div>
+        
+            <div class="col-md-6">
+                <img src="teaching-image.png" alt="Teaching Image" class="img-fluid">
+            </div>
         </div>
-        <div class="col-md-6">
-          <img src="teaching-image.png" alt="Teaching Image" class="img-fluid">
+    </div>
+
+    
+    <div class="container mt-5">
+        <h2 class="section-title text-center">How It Works</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="feature-box">
+                    <h4>Step 1: Sign Up</h4>
+                    <p class="section-content">Simply sign up with your email and password. It's quick, easy, and free! Start accessing your teaching resources right away.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-box">
+                    <h4>Step 2: Plan your best lesson</h4>
+                    <p class="section-content">Plan with ease in a enviroment tailored to your every need!</p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <!-- Quote Section -->
-  <div class="container-custom mt-5">
-    <blockquote class="blockquote">
-      <p>For 50 years, WWF has been protecting the future of nature. The world's leading conservation organization, WWF works in 100 countries and is supported by 1.2 million members in the United States and close to 5 million globally.</p>
-      <footer class="blockquote-footer">From WWF's website</footer>
-    </blockquote>
-  </div>
 
-  <!-- Why Us Section -->
-  <div class="container bg-light mt-5">
-    <div class="row align-items-start" style="background-color: #0288d1; color: white;">
-      <div class="col-sm-4 text-center">
-        <p class="fs-1 text-center">Why Us?</p>
-        <span class="badge custom-badge fs-4 d-block mb-2">A hub of productivity</span>
-        <span class="badge custom-badge fs-4 d-block mb-2">Easy access</span>
-        <span class="badge custom-badge fs-4 d-block mb-2">Customizable</span>
-      </div>
-
-      <div class="col-sm-8">
-        <h2>How to Add Space Between Elements in Bootstrap</h2>
-        <p>When designing layouts in Bootstrap, managing spacing between elements is essential for a clean, organized look. Below are several ways to add space between elements such as badges, buttons, or other components:</p>
-        <ul>
-          <li><strong>Spacing Utilities:</strong> Use the classes `m-{side}-{size}` and `p-{side}-{size}` to add margin and padding.</li>
-          <li><strong>Flexbox Utilities:</strong> Use the `gap` property for consistent spacing between flex items (available in Bootstrap 5+).</li>
-          <li><strong>Grid System Gutter Classes:</strong> Apply the `g-*` classes to control the space between columns.</li>
-        </ul>
-      </div>
+   
+    <div class="container mt-5">
+        <h2 class="section-title text-center">Key Features</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4 class="text-center">User-Friendly Interface</h4>
+                    <p class="section-content">Navigate our platform with ease. The intuitive interface ensures that teachers and students can access everything they need in just a few clicks.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4 class="text-center">Collaboration Tools</h4>
+                    <p class="section-content">Collaborate with other educators, students, and administrators. Chat to each other in real time!.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <h4 class="text-center">Planning With Ease</h4>
+                    <p class="section-content">Add your lesson plans for an all in one experience!.</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Footer Section -->
-  <div class="footer text-center mt-5">
-    <p>© 2025 The Learning Lab. All rights reserved.</p>
-  </div>
+    <!-- Quote Section -->
+    <div class="container mt-5">
+        <div class="blockquote">
+            <p>At The Learning Lab, we make lesson planning effortless and efficient, empowering educators to create impactful lessons in no time."</p>
+            <footer class="blockquote-footer">From The Learning Lab team</footer>
+        </div>
+    </div>
 
-  <!-- Bootstrap JS & Popper.js -->
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>© 2025 The Learning Lab. All rights reserved.</p>
+    </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0f1+48gfQo9jlmP6dIfqD5k78VgXorJkFNE1z29Y6vFL9a9B" crossorigin="anonymous"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>
+
 </html>

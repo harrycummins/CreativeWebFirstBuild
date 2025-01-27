@@ -1,122 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily.co Video Room</title>
-</head>
-<body>
-    <h1>Join Video Room</h1>
-    <div id="video-container"></div>
-    <li class="nav-item">
-        <a class="nav-link" href="/create-room">Testing Rooms</a>
-    </li>
-    <!-- <button id="start-screen-share">Start Screen Share</button>
-    <button id="stop-screen-share">Stop Screen Share</button> -->
+<html>
+  <script crossorigin src="https://unpkg.com/@daily-co/daily-js"></script>
+  <body>
+    <script>document.addEventListener("DOMContentLoaded", function() {
 
-    <body>
-        <div style="width:80%;background: grey;margin: auto;">
-            <video id="video" autoplay playsinline muted></video>
-        </div>
-        <div style="width:80%;margin: auto;padding-top:10px ;">
-            <button class="btn btn-primary" id="start"> Start Screen Sharing</button>
-            <button class="btn btn-secondary" id="stop"> Stop</button>
-        </div>
+        //taken from daily
+  const iframe = document.querySelector("iframe");
 
-        <!--<script>
-            // const videoElem = document.getElementById("video");
-            // const startElem = document.getElementById("start");
-            // const stopElem = document.getElementById("stop");
-            // // Options for getDisplayMedia()
-            // var displayMediaOptions = {
-            //     video: {
-            //         cursor: "always",
-            //         height: 1000,
-            //         width: 1200
-            //     },
-            //     audio: false
-            // };
-            // // Set event listeners for the start and stop buttons
-            // startElem.addEventListener("click", function (evt) {
-            //     startCapture();
-            // }, false);
-            // stopElem.addEventListener("click", function (evt) {
-            //     stopCapture();
-            // }, false);
-            // async function startCapture() {
-            //     try {
-            //         videoElem.srcObject = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-            //         dumpOptionsInfo();
-            //     } catch (err) {
-            //         console.error("Error: " + err);
-            //     }
-            // }
-    
-            // function stopCapture(evt) {
-            //     let tracks = videoElem.srcObject.getTracks();
-            //     tracks.forEach(track => track.stop());
-            //     videoElem.srcObject = null;
-            // }
-    
-            // function dumpOptionsInfo() {
-            //     const videoTrack = videoElem.srcObject.getVideoTracks()[0];
-            //     console.info("Track settings:");
-            //     console.info(JSON.stringify(videoTrack.getSettings(), null, 2));
-            //     console.info("Track constraints:");
-            //     console.info(JSON.stringify(videoTrack.getConstraints(), null, 2));
-            // }
-        </script>
+  if (iframe) {
+    iframe.onload = function() {
+      // Now the iframe content is loaded, and you can safely work with it.
+      const content = iframe.contentWindow.document.body.innerText;
+      const parts = content.split(' '); // Example of safe split
+      console.log(parts);
+    };
+  } else {
+    console.error("Iframe not found!");
+  }
+});
+      async function joinDailyRoom() {
+        // Define the room name and user ID
+        const roomName = "learning-lab-room"; // Replace with your room name
+        const userId = "userID"; // Replace with a unique user ID for this user
 
+        try {
+          // Fetch the token from your backend
+          const response = await fetch("http://localhost:3000/api/generate-token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ roomName, userId }),
+          });
 
+          if (!response.ok) {
+            throw new Error("Failed to fetch token");
+          }
 
+          const { token } = await response.json();
 
+          // Create the Daily iframe
+          const callFrame = DailyIframe.createFrame({
+            iframeStyle: {
+              width: "100%",
+              height: "100%",
+              border: "none",
+            },
+          });
 
+          // Join the room using the generated token
+          callFrame.join({
+            url: `https://teachingapplication.daily.co/${roomName}?t=${token}`,
+          });
 
-
-
-
-
-    <script> //script is taken from the daily api start up page
-        // Fetch the room URL from the backend
-        fetch('/create-room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json()) //make the data json format
-        .then(data => {
-            const roomUrl = data.roomUrl;
-            console.log('Room URL:', roomUrl);
-            startCall(roomUrl);  // Join the room
-        })
-        .catch(error => console.error('Error fetching room URL:', error));
-
-        let callObject;
-
-        async function startCall(roomUrl) {
-          
-            callObject = window.DailyIframe.createFrame({   // Initialize Daily  with the room URL
-                url: roomUrl,
-                showLeaveButton: true,
-                width: '100%',
-                height: '500px',
-            });
-
-            
-            await callObject.join();// Join the room
+        } catch (error) {
+          console.error("Error joining Daily room:", error);
         }
+      }
 
-        // Start and stop screen share
-        document.getElementById('start-screen-share').addEventListener('click', async () => {
-            await callObject.startScreenShare();
-        });
-
-        document.getElementById('stop-screen-share').addEventListener('click', async () => {
-            await callObject.stopScreenShare();
-        });
+      // Call the function to join the room
+      joinDailyRoom();
     </script>
-
-    <script src="https://unpkg.com/@daily-co/daily-js@latest"></script> -->
-</body>
+  </body>
 </html>
